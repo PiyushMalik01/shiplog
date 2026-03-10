@@ -45,6 +45,8 @@ function NewChangelogContent() {
   const [editedTitle, setEditedTitle] = useState('')
   const [editedItems, setEditedItems] = useState<Record<Category, string[]>>({ new: [], improved: [], fixed: [] })
   const [generateError, setGenerateError] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [loadingEdit, setLoadingEdit] = useState(false)
   const searchParams = useSearchParams()
   const router = useRouter()
   const supabase = createClient()
@@ -55,10 +57,31 @@ function NewChangelogContent() {
       const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false })
       setProjects(data ?? [])
       const pid = searchParams.get('project_id') || searchParams.get('project')
+      const eid = searchParams.get('edit')
       if (pid && data) {
         setSelectedProject(pid)
       } else if (data?.length) {
         setSelectedProject(data[0].id)
+      }
+      if (eid) {
+        setEditingId(eid)
+        setLoadingEdit(true)
+        try {
+          const res = await fetch(`/api/changelogs/${eid}`)
+          if (res.ok) {
+            const entry = await res.json()
+            setSelectedProject(entry.project_id)
+            setRawInput(entry.raw_input ?? '')
+            setVersion(entry.version ?? '')
+            setEditedTitle(entry.title ?? '')
+            const c = entry.content ?? { new: [], improved: [], fixed: [] }
+            setEditedItems({ new: c.new ?? [], improved: c.improved ?? [], fixed: c.fixed ?? [] })
+            // Mark result as present so the right panel shows
+            setResult({ title: entry.title, new: c.new ?? [], improved: c.improved ?? [], fixed: c.fixed ?? [] })
+          }
+        } finally {
+          setLoadingEdit(false)
+        }
       }
     }
     load()
@@ -97,15 +120,17 @@ function NewChangelogContent() {
     publish ? setPublishing(true) : setSaving(true)
     try {
       const body = {
-        project_id: selectedProject,
+        ...(!editingId ? { project_id: selectedProject } : {}),
         title: editedTitle,
         version: version || null,
         raw_input: rawInput,
         content: editedItems,
         ...(publish ? { is_published: true, published_at: new Date().toISOString() } : {}),
       }
-      const res = await fetch('/api/changelogs', {
-        method: 'POST',
+      const url = editingId ? `/api/changelogs/${editingId}` : '/api/changelogs'
+      const method = editingId ? 'PATCH' : 'POST'
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
@@ -113,7 +138,7 @@ function NewChangelogContent() {
         const data = await res.json()
         throw new Error(data.error || 'Failed to save')
       }
-      toast.success(publish ? 'Published!' : 'Saved as draft')
+      toast.success(publish ? 'Published!' : (editingId ? 'Draft updated' : 'Saved as draft'))
       router.push(`/changelog?project_id=${selectedProject}`)
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Save failed')
@@ -164,6 +189,16 @@ function NewChangelogContent() {
         )}
       </div>
 
+      {loadingEdit && (
+        <div className="flex items-center gap-2 py-4 text-[#64748b] text-sm">
+          <Loader2 className="w-4 h-4 animate-spin" /> Loading entry...
+        </div>
+      )}
+      {editingId && !loadingEdit && (
+        <div className="mb-4 px-4 py-2.5 rounded-xl bg-[#eff8ff] border border-[#bae6fd] text-xs font-semibold text-[#0077b6]">
+          Editing existing draft — saving will update this entry, not create a new one.
+        </div>
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* ── Left column: Input ── */}
         <div className="flex flex-col gap-4">

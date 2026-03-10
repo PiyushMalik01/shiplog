@@ -33,6 +33,15 @@ function formatChangelogText(result: ShipItResult): string {
   return lines.join('\n')
 }
 
+function shipItKey(id: string) { return `shipit_${id}` }
+function loadShipItCache(id: string): { notes: string; result: ShipItResult | null; draftId: string | null } | null {
+  if (typeof window === 'undefined') return null
+  try { return JSON.parse(localStorage.getItem(shipItKey(id)) ?? 'null') } catch { return null }
+}
+function saveShipItCache(id: string, state: { notes: string; result: ShipItResult | null; draftId: string | null }) {
+  try { localStorage.setItem(shipItKey(id), JSON.stringify(state)) } catch {}
+}
+
 interface AddItemFormProps {
   columnId: ColumnId
   onAdd: (title: string, description: string, status: ColumnId) => Promise<void>
@@ -98,6 +107,7 @@ function RoadmapContent() {
   const [shipItItem, setShipItItem] = useState<RoadmapItem | null>(null)
   const [shipItNotes, setShipItNotes] = useState('')
   const [shipItResult, setShipItResult] = useState<ShipItResult | null>(null)
+  const [shipItDraftId, setShipItDraftId] = useState<string | null>(null)
   const [generatingShipIt, setGeneratingShipIt] = useState(false)
   const [shipItCopied, setShipItCopied] = useState<string | null>(null)
   const [savingChangelog, setSavingChangelog] = useState(false)
@@ -196,9 +206,11 @@ function RoadmapContent() {
   }
 
   function openShipIt(item: RoadmapItem) {
+    const cached = loadShipItCache(item.id)
     setShipItItem(item)
-    setShipItNotes('')
-    setShipItResult(null)
+    setShipItNotes(cached?.notes ?? '')
+    setShipItResult(cached?.result ?? null)
+    setShipItDraftId(cached?.draftId ?? null)
     setShipItCopied(null)
   }
 
@@ -220,6 +232,7 @@ function RoadmapContent() {
       if (!res.ok) throw new Error('Generation failed')
       const data = await res.json()
       setShipItResult(data)
+      saveShipItCache(shipItItem.id, { notes: shipItNotes, result: data, draftId: shipItDraftId })
     } catch {
       toast.error('Failed to generate posts')
     } finally {
@@ -465,7 +478,10 @@ function RoadmapContent() {
                 <p className="text-xs text-[#64748b] mb-2">Paste commit messages, bullet points, or rough notes about what you built. AI will generate polished posts from them.</p>
                 <textarea
                   value={shipItNotes}
-                  onChange={e => setShipItNotes(e.target.value)}
+                  onChange={e => {
+                    setShipItNotes(e.target.value)
+                    if (shipItItem) saveShipItCache(shipItItem.id, { notes: e.target.value, result: shipItResult, draftId: shipItDraftId })
+                  }}
                   rows={5}
                   placeholder="e.g. rewrote search with trigram index, added dark mode toggle, fixed nav dropdown on mobile..."
                   className="w-full text-sm text-[#03045e] border border-[#e2e8f0] rounded-xl px-3.5 py-3 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] resize-none placeholder:text-[#94a3b8]"
@@ -531,7 +547,7 @@ function RoadmapContent() {
                         className="mt-1 w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#03045e] hover:bg-[#0077b6] text-white text-xs font-bold transition-colors disabled:opacity-50"
                       >
                         {savingChangelog ? <Loader2 className="w-3 h-3 animate-spin" /> : <FileText className="w-3 h-3" />}
-                        {savingChangelog ? 'Saving...' : 'Save as draft in Changelog'}
+                        {savingChangelog ? 'Saving...' : (shipItDraftId ? 'Update existing draft' : 'Save as draft in Changelog')}
                       </button>
                     </div>
                   </div>
