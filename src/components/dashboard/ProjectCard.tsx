@@ -32,19 +32,19 @@ export default function ProjectCard({ project, lastShipped }: { project: Project
   })
 
   return (
-    <div className="group bg-white rounded-2xl border border-[#e2e8f0] hover:border-[#caf0f8] shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col">
+    <div className="group bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 hover:border-[#caf0f8] dark:hover:border-[#1e3a52] shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden flex flex-col">
       <div className="p-5 flex-1 flex flex-col">
         {/* Top row: name + settings gear */}
         <div className="flex items-start justify-between gap-3 mb-1">
           <h3
-            className="font-bold text-[#03045e] text-[16px] leading-snug truncate"
+            className="font-bold text-[#03045e] dark:text-white text-[16px] leading-snug truncate"
             style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
           >
             {project.name}
           </h3>
           <Link
             href={`/projects/${project.id}/settings`}
-            className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-[#94a3b8] hover:text-[#0077b6] hover:bg-[#f0f9ff] transition-colors"
+            className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-[#94a3b8] hover:text-[#0077b6] hover:bg-[#f0f9ff] dark:hover:bg-white/8 transition-colors"
             title="Project settings"
           >
             <Settings className="w-3.5 h-3.5" />
@@ -57,7 +57,7 @@ export default function ProjectCard({ project, lastShipped }: { project: Project
           <span className={`inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md ${
             project.is_public
               ? 'bg-[#dcfce7] text-[#16a34a]'
-              : 'bg-[#f1f5f9] text-[#94a3b8]'
+              : 'bg-[#f1f5f9] dark:bg-white/8 text-[#94a3b8]'
           }`}>
             {project.is_public ? <Globe className="w-2.5 h-2.5" /> : <Lock className="w-2.5 h-2.5" />}
             {project.is_public ? 'Public' : 'Private'}
@@ -67,15 +67,15 @@ export default function ProjectCard({ project, lastShipped }: { project: Project
         {/* Description */}
         <div className="flex-1 mb-4">
           {project.description ? (
-            <p className="text-[13px] text-[#64748b] line-clamp-2 leading-relaxed">{project.description}</p>
+            <p className="text-[13px] text-[#64748b] dark:text-slate-400 line-clamp-2 leading-relaxed">{project.description}</p>
           ) : (
-            <p className="text-[13px] text-[#cbd5e1] italic">No description</p>
+            <p className="text-[13px] text-[#cbd5e1] dark:text-slate-600 italic">No description</p>
           )}
         </div>
 
         {/* Meta row */}
         <div className="flex items-center gap-2 mb-4">
-          <p className="text-[10px] text-[#94a3b8]">Created {created}</p>
+          <p className="text-[10px] text-[#94a3b8] dark:text-slate-500">Created {created}</p>
           {lastShipped && (
             <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold text-[#16a34a] bg-[#f0fdf4] px-1.5 py-0.5 rounded-md border border-[#bbf7d0]">
               <Zap className="w-2.5 h-2.5" />
@@ -85,7 +85,7 @@ export default function ProjectCard({ project, lastShipped }: { project: Project
         </div>
 
         {/* Actions */}
-        <div className="flex gap-2 pt-3 border-t border-[#f1f5f9]">
+        <div className="flex gap-2 pt-3 border-t border-[#f1f5f9] dark:border-white/6">
           <Link
             href={`/changelog/new?project=${project.id}`}
             className="flex-1 flex items-center justify-center gap-1.5 text-[12px] font-bold text-white bg-[#0077b6] hover:bg-[#023e8a] py-2.5 rounded-xl transition-colors duration-150 shadow-sm no-underline"
@@ -97,7 +97,7 @@ export default function ProjectCard({ project, lastShipped }: { project: Project
             <Link
               href={`/${project.slug}`}
               target="_blank"
-              className="flex items-center justify-center w-10 py-2.5 rounded-xl text-[#64748b] hover:text-[#0077b6] border border-[#e2e8f0] hover:border-[#caf0f8] hover:bg-[#f0f9ff] transition-all duration-150 no-underline"
+              className="flex items-center justify-center w-10 py-2.5 rounded-xl text-[#64748b] hover:text-[#0077b6] border border-[#e2e8f0] dark:border-white/8 hover:border-[#caf0f8] hover:bg-[#f0f9ff] dark:hover:bg-white/8 transition-all duration-150 no-underline"
               title="View public page"
             >
               <ExternalLink className="w-3.5 h-3.5" />
@@ -105,14 +105,14 @@ export default function ProjectCard({ project, lastShipped }: { project: Project
           )}
           <Link
             href={`/roadmap?project_id=${project.id}`}
-            className="flex items-center justify-center w-10 py-2.5 rounded-xl text-[#64748b] hover:text-[#0077b6] border border-[#e2e8f0] hover:border-[#caf0f8] hover:bg-[#f0f9ff] transition-all duration-150 no-underline"
+            className="flex items-center justify-center w-10 py-2.5 rounded-xl text-[#64748b] hover:text-[#0077b6] border border-[#e2e8f0] dark:border-white/8 hover:border-[#caf0f8] hover:bg-[#f0f9ff] dark:hover:bg-white/8 transition-all duration-150 no-underline"
             title="Roadmap"
           >
             <Map className="w-3.5 h-3.5" />
           </Link>
           <button
             onClick={copyLink}
-            className="flex items-center justify-center w-10 py-2.5 rounded-xl text-[#64748b] hover:text-[#0077b6] border border-[#e2e8f0] hover:border-[#caf0f8] hover:bg-[#f0f9ff] transition-all duration-150 cursor-pointer"
+            className="flex items-center justify-center w-10 py-2.5 rounded-xl text-[#64748b] hover:text-[#0077b6] border border-[#e2e8f0] dark:border-white/8 hover:border-[#caf0f8] hover:bg-[#f0f9ff] dark:hover:bg-white/8 transition-all duration-150 cursor-pointer"
             title="Copy link"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-[#16a34a]" /> : <Link2 className="w-3.5 h-3.5" />}

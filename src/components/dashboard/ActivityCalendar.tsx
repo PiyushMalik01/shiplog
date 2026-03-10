@@ -156,7 +156,7 @@ export default function ActivityCalendar({ projectIds }: { projectIds: string[] 
   function cellBg(dateStr: string) {
     if (!dateStr) return 'opacity-0'
     const v = activityMap[dateStr] ?? 0
-    if (v === 0) return 'bg-[#f1f5f9]'
+    if (v === 0) return 'bg-[#f1f5f9] dark:bg-white/6'
     if (v === 1) return 'bg-[#90e0ef]'
     if (v === 2) return 'bg-[#00b4d8]'
     if (v <= 4) return 'bg-[#0077b6]'
@@ -177,12 +177,12 @@ export default function ActivityCalendar({ projectIds }: { projectIds: string[] 
       {/* Quick stats row */}
       <div className="grid grid-cols-2 gap-2.5">
         {[
-          { icon: Flame, label: 'Streak', value: `${streak}d`, color: '#f59e0b', bg: '#fffbeb' },
-          { icon: CalendarDays, label: 'Active days', value: String(activeDays), color: '#0077b6', bg: '#eff8ff' },
-          { icon: BarChart3, label: 'Changelogs', value: String(changelogCount), color: '#0077b6', bg: '#eff8ff' },
-          { icon: TrendingUp, label: 'Requests', value: String(requestCount), color: '#16a34a', bg: '#f0fdf4' },
+          { icon: Flame, label: 'Streak', value: `${streak}d`, color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' },
+          { icon: CalendarDays, label: 'Active days', value: String(activeDays), color: '#0077b6', bg: 'rgba(0, 119, 182, 0.12)' },
+          { icon: BarChart3, label: 'Changelogs', value: String(changelogCount), color: '#0077b6', bg: 'rgba(0, 119, 182, 0.12)' },
+          { icon: TrendingUp, label: 'Requests', value: String(requestCount), color: '#16a34a', bg: 'rgba(22, 163, 74, 0.12)' },
         ].map(({ icon: Icon, label, value, color, bg }) => (
-          <div key={label} className="bg-white rounded-xl border border-[#e2e8f0] p-3 flex items-center gap-2.5">
+          <div key={label} className="bg-white dark:bg-[#0d1b2e] rounded-xl border border-[#e2e8f0] dark:border-white/8 p-3 flex items-center gap-2.5">
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
               style={{ backgroundColor: bg }}
@@ -191,38 +191,38 @@ export default function ActivityCalendar({ projectIds }: { projectIds: string[] 
             </div>
             <div className="min-w-0">
               <p
-                className="text-[16px] font-extrabold text-[#03045e] leading-none"
+                className="text-[16px] font-extrabold text-[#03045e] dark:text-white leading-none"
                 style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
               >
                 {value}
               </p>
-              <p className="text-[9px] text-[#94a3b8] font-semibold uppercase tracking-wide mt-0.5">{label}</p>
+              <p className="text-[9px] text-[#94a3b8] dark:text-slate-500 font-semibold uppercase tracking-wide mt-0.5">{label}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Heatmap */}
-      <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm p-4">
-        <div className="flex items-center justify-between mb-3">
+      <div className="bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 shadow-sm p-4">
+          <div className="flex items-center justify-between mb-3">
           <h3
-            className="font-bold text-[#03045e] text-[13px]"
+            className="font-bold text-[#03045e] dark:text-white text-[13px]"
             style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
           >
             Contribution Graph
           </h3>
-          <span className="text-[9px] font-bold text-[#94a3b8] uppercase tracking-widest">10 weeks</span>
+          <span className="text-[9px] font-bold text-[#94a3b8] dark:text-slate-500 uppercase tracking-widest">10 weeks</span>
         </div>
 
         {loading ? (
-          <div className="h-[86px] rounded-xl bg-[#f1f5f9] animate-pulse" />
+          <div className="h-[86px] rounded-xl bg-[#f1f5f9] dark:bg-white/6 animate-pulse" />
         ) : (
           <>
             <div className="flex gap-[3px] overflow-x-auto">
               {/* Day labels */}
               <div className="flex flex-col gap-[3px] mr-[2px] flex-shrink-0">
                 {['', 'M', '', 'W', '', 'F', ''].map((l, i) => (
-                  <span key={i} className="h-[11px] w-3 text-[8px] text-[#94a3b8] font-medium flex items-center justify-end leading-none">
+                  <span key={i} className="h-[11px] w-3 text-[8px] text-[#94a3b8] dark:text-slate-600 font-medium flex items-center justify-end leading-none">
                     {l}
                   </span>
                 ))}
@@ -248,15 +248,15 @@ export default function ActivityCalendar({ projectIds }: { projectIds: string[] 
             {/* Legend + busiest day */}
             <div className="flex items-center justify-between mt-2.5 flex-wrap gap-1">
               <div className="flex items-center gap-[3px]">
-                <span className="text-[8px] text-[#94a3b8] mr-0.5">Less</span>
+                <span className="text-[8px] text-[#94a3b8] dark:text-slate-500 mr-0.5">Less</span>
                 {['bg-[#f1f5f9]', 'bg-[#90e0ef]', 'bg-[#00b4d8]', 'bg-[#0077b6]', 'bg-[#023e8a]'].map((c, i) => (
                   <div key={i} className={`w-[11px] h-[11px] rounded-[2px] ${c}`} />
                 ))}
-                <span className="text-[8px] text-[#94a3b8] ml-0.5">More</span>
+                <span className="text-[8px] text-[#94a3b8] dark:text-slate-500 ml-0.5">More</span>
               </div>
               {busiestDay && (
-                <span className="text-[8px] text-[#94a3b8]">
-                  Busiest: <span className="font-semibold text-[#64748b]">{formatBusiest(busiestDay)}</span>
+                <span className="text-[8px] text-[#94a3b8] dark:text-slate-500">
+                  Busiest: <span className="font-semibold text-[#64748b] dark:text-slate-400">{formatBusiest(busiestDay)}</span>
                 </span>
               )}
             </div>
@@ -265,9 +265,9 @@ export default function ActivityCalendar({ projectIds }: { projectIds: string[] 
       </div>
 
       {/* Recent activity */}
-      <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm p-4">
+      <div className="bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 shadow-sm p-4">
         <h3
-          className="font-bold text-[#03045e] text-[13px] mb-3"
+          className="font-bold text-[#03045e] dark:text-white text-[13px] mb-3"
           style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
         >
           Recent Activity
@@ -277,10 +277,10 @@ export default function ActivityCalendar({ projectIds }: { projectIds: string[] 
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
               <div key={i} className="flex gap-2.5">
-                <div className="w-7 h-7 rounded-xl flex-shrink-0 bg-[#f1f5f9] animate-pulse" />
+                <div className="w-7 h-7 rounded-xl flex-shrink-0 bg-[#f1f5f9] dark:bg-white/6 animate-pulse" />
                 <div className="flex-1 space-y-1.5">
-                  <div className="h-3 bg-[#f1f5f9] rounded animate-pulse" />
-                  <div className="h-2.5 bg-[#f1f5f9] rounded w-2/3 animate-pulse" />
+                  <div className="h-3 bg-[#f1f5f9] dark:bg-white/6 rounded animate-pulse" />
+                  <div className="h-2.5 bg-[#f1f5f9] dark:bg-white/6 rounded w-2/3 animate-pulse" />
                 </div>
               </div>
             ))}
@@ -296,7 +296,7 @@ export default function ActivityCalendar({ projectIds }: { projectIds: string[] 
               <div key={i} className="flex items-start gap-2.5 group/item">
                 <div
                   className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
-                    item.type === 'changelog' ? 'bg-[#eff8ff] group-hover/item:bg-[#dbeafe]' : 'bg-[#f0fdf4] group-hover/item:bg-[#dcfce7]'
+                    item.type === 'changelog' ? 'bg-[#eff8ff] dark:bg-[#0077b6]/15 group-hover/item:bg-[#dbeafe]' : 'bg-[#f0fdf4] dark:bg-[#16a34a]/10 group-hover/item:bg-[#dcfce7]'
                   }`}
                 >
                   {item.type === 'changelog' ? (
@@ -306,7 +306,7 @@ export default function ActivityCalendar({ projectIds }: { projectIds: string[] 
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] font-semibold text-[#03045e] truncate leading-tight">
+                  <p className="text-[11px] font-semibold text-[#03045e] dark:text-slate-200 truncate leading-tight">
                     {item.title}
                   </p>
                   <div className="flex items-center gap-1.5 mt-0.5">
@@ -318,7 +318,7 @@ export default function ActivityCalendar({ projectIds }: { projectIds: string[] 
                       {item.type === 'changelog' ? 'Update' : 'Request'}
                     </span>
                     <span className="w-0.5 h-0.5 rounded-full bg-[#cbd5e1]" />
-                    <span className="text-[9px] text-[#94a3b8]">{formatDate(item.date)}</span>
+                    <span className="text-[9px] text-[#94a3b8] dark:text-slate-500">{formatDate(item.date)}</span>
                   </div>
                 </div>
               </div>

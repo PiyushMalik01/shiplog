@@ -69,25 +69,25 @@ export default function NewProjectPage() {
   }
 
   const inputClass = (hasError?: boolean) =>
-    `w-full rounded-xl border px-4 py-2.5 text-sm text-[#03045e] bg-white outline-none transition-all duration-150 placeholder:text-[#94a3b8] focus:ring-2 focus:ring-[#0077b6]/20 ${
-      hasError ? 'border-red-400' : 'border-[#e2e8f0] focus:border-[#0077b6]'
+    `w-full rounded-xl border px-4 py-2.5 text-sm text-[#03045e] dark:text-slate-100 bg-white dark:bg-[#080f1e] outline-none transition-all duration-150 placeholder:text-[#94a3b8] focus:ring-2 focus:ring-[#0077b6]/20 ${
+      hasError ? 'border-red-400' : 'border-[#e2e8f0] dark:border-white/10 focus:border-[#0077b6]'
     }`
 
   return (
     <div className="min-h-full p-6 md:p-8">
       {/* Breadcrumb */}
-      <p className="text-[11px] font-semibold text-[#64748b] uppercase tracking-widest mb-6">
+      <p className="text-[11px] font-semibold text-[#64748b] dark:text-slate-400 uppercase tracking-widest mb-6">
         Dashboard / Projects / New
       </p>
 
       <div className="max-w-[560px]">
         <h1
-          className="text-[28px] font-bold text-[#03045e] leading-tight mb-1"
+          className="text-[28px] font-bold text-[#03045e] dark:text-white leading-tight mb-1"
           style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
         >
           Create a new project
         </h1>
-        <p className="text-[#64748b] text-sm mb-8">
+        <p className="text-[#64748b] dark:text-slate-400 text-sm mb-8">
           Your project gets a public changelog page at{' '}
           <span className="font-mono text-[#0077b6]">shiplog.app/your-slug</span>
         </p>
@@ -95,7 +95,7 @@ export default function NewProjectPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Project Name */}
           <div>
-            <label htmlFor="name" className="block text-[13px] font-semibold text-[#03045e] mb-1.5">
+            <label htmlFor="name" className="block text-[13px] font-semibold text-[#03045e] dark:text-slate-200 mb-1.5">
               Project name
             </label>
             <input
@@ -112,11 +112,11 @@ export default function NewProjectPage() {
 
           {/* Slug */}
           <div>
-            <label htmlFor="slug" className="block text-[13px] font-semibold text-[#03045e] mb-1.5">
+            <label htmlFor="slug" className="block text-[13px] font-semibold text-[#03045e] dark:text-slate-200 mb-1.5">
               Public URL slug
             </label>
-            <div className="flex items-stretch rounded-xl border border-[#e2e8f0] bg-white overflow-hidden focus-within:border-[#0077b6] focus-within:ring-2 focus-within:ring-[#0077b6]/20 transition-all duration-150">
-              <span className="flex items-center px-3 text-sm text-[#94a3b8] bg-[#f8fafc] border-r border-[#e2e8f0] select-none whitespace-nowrap">
+            <div className="flex items-stretch rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#080f1e] overflow-hidden focus-within:border-[#0077b6] focus-within:ring-2 focus-within:ring-[#0077b6]/20 transition-all duration-150">
+              <span className="flex items-center px-3 text-sm text-[#94a3b8] bg-[#f8fafc] dark:bg-white/4 border-r border-[#e2e8f0] dark:border-white/10 select-none whitespace-nowrap">
                 shiplog.app/
               </span>
               <input
@@ -125,7 +125,7 @@ export default function NewProjectPage() {
                 required
                 value={slug}
                 onChange={e => { setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')); setSlugError('') }}
-                className="flex-1 px-3 py-2.5 text-sm text-[#03045e] bg-white outline-none placeholder:text-[#94a3b8]"
+                className="flex-1 px-3 py-2.5 text-sm text-[#03045e] dark:text-slate-100 bg-white dark:bg-[#080f1e] outline-none placeholder:text-[#94a3b8]"
                 placeholder="my-saas-app"
                 minLength={2}
               />
@@ -148,7 +148,7 @@ export default function NewProjectPage() {
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-[13px] font-semibold text-[#03045e] mb-1.5">
+            <label htmlFor="description" className="block text-[13px] font-semibold text-[#03045e] dark:text-slate-200 mb-1.5">
               Description{' '}
               <span className="text-[#94a3b8] font-normal">(optional)</span>
             </label>
@@ -163,10 +163,10 @@ export default function NewProjectPage() {
           </div>
 
           {/* Visibility toggle */}
-          <div className="flex items-start justify-between gap-4 p-4 rounded-xl border border-[#e2e8f0] bg-white">
+          <div className="flex items-start justify-between gap-4 p-4 rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e]">
             <div>
-              <p className="text-[13px] font-semibold text-[#03045e]">Public changelog page</p>
-              <p className="text-xs text-[#64748b] mt-0.5">
+              <p className="text-[13px] font-semibold text-[#03045e] dark:text-white">Public changelog page</p>
+              <p className="text-xs text-[#64748b] dark:text-slate-400 mt-0.5">
                 Anyone with the link can view your changelog and submit feature requests.
               </p>
             </div>
@@ -176,7 +176,7 @@ export default function NewProjectPage() {
               aria-checked={isPublic}
               onClick={() => setIsPublic(v => !v)}
               className={`relative flex-shrink-0 mt-0.5 w-11 h-6 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0077b6]/40 ${
-                isPublic ? 'bg-[#0077b6]' : 'bg-[#e2e8f0]'
+                isPublic ? 'bg-[#0077b6]' : 'bg-[#e2e8f0] dark:bg-white/15'
               }`}
             >
               <span

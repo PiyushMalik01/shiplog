@@ -10,6 +10,7 @@ import {
   LayoutDashboard, FolderOpen, ScrollText,
   MessageSquare, Map, Settings, LogOut,
 } from 'lucide-react'
+import ThemeToggle from './ThemeToggle'
 
 const navItems = [
   { label: 'Overview',  href: '/dashboard',   icon: LayoutDashboard },
@@ -32,10 +33,10 @@ export default function Sidebar() {
   }
 
   return (
-    <div className="w-[260px] h-screen flex flex-col bg-white/70 backdrop-blur-md border-r border-[#caf0f8]">
+    <div className="w-[260px] h-screen flex flex-col bg-white/70 dark:bg-[#05101e]/90 backdrop-blur-md border-r border-[#caf0f8] dark:border-white/6">
 
       {/* Logo */}
-      <div className="px-5 py-4 border-b border-[#caf0f8]">
+      <div className="px-5 py-4 border-b border-[#caf0f8] dark:border-white/6">
         <Link href="/dashboard" className="flex items-center gap-3 group no-underline">
           <Image
             src="/shiplog_logodark.png"
@@ -47,15 +48,15 @@ export default function Sidebar() {
             style={{ height: '36px', width: 'auto' }}
           />
           <div>
-            <p className="font-bold text-[#03045e] text-base leading-none" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>ShipLog</p>
-            <p className="text-[11px] text-[#64748b] mt-0.5">Workspace</p>
+            <p className="font-bold text-[#03045e] dark:text-white text-base leading-none" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>ShipLog</p>
+            <p className="text-[11px] text-[#64748b] dark:text-slate-500 mt-0.5">Workspace</p>
           </div>
         </Link>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        <p className="px-3 mb-2 text-[11px] font-semibold text-[#64748b] uppercase tracking-widest">Main</p>
+        <p className="px-3 mb-2 text-[11px] font-semibold text-[#64748b] dark:text-slate-500 uppercase tracking-widest">Main</p>
         {navItems.map(({ label, href, icon: Icon }) => {
           const isActive = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
           return (
@@ -66,7 +67,7 @@ export default function Sidebar() {
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 no-underline',
                 isActive
                   ? 'bg-[#0077b6] text-white shadow-md'
-                  : 'text-[#475569] hover:bg-[#caf0f8] hover:text-[#03045e]'
+                  : 'text-[#475569] dark:text-slate-400 hover:bg-[#caf0f8] dark:hover:bg-white/8 hover:text-[#03045e] dark:hover:text-white'
               )}
             >
               <Icon className="w-4 h-4 flex-shrink-0" />
@@ -76,11 +77,11 @@ export default function Sidebar() {
           )
         })}
 
-        <div className="pt-4 mt-2 border-t border-[#caf0f8]">
-          <p className="px-3 mb-2 text-[11px] font-semibold text-[#64748b] uppercase tracking-widest">Settings</p>
+        <div className="pt-4 mt-2 border-t border-[#caf0f8] dark:border-white/6">
+          <p className="px-3 mb-2 text-[11px] font-semibold text-[#64748b] dark:text-slate-500 uppercase tracking-widest">Settings</p>
           <Link
             href="/settings"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#475569] hover:bg-[#caf0f8] hover:text-[#03045e] transition-all duration-150 no-underline"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#475569] dark:text-slate-400 hover:bg-[#caf0f8] dark:hover:bg-white/8 hover:text-[#03045e] dark:hover:text-white transition-all duration-150 no-underline"
           >
             <Settings className="w-4 h-4" />
             Settings
@@ -89,10 +90,11 @@ export default function Sidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 pb-4 border-t border-[#caf0f8] pt-3">
+      <div className="px-3 pb-4 border-t border-[#caf0f8] dark:border-white/6 pt-3">
+        <ThemeToggle />
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#475569] hover:bg-red-50 hover:text-red-500 transition-all duration-150 cursor-pointer"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#475569] dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 dark:hover:text-red-400 transition-all duration-150 cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           Log Out

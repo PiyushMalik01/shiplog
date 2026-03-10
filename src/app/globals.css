@@ -157,6 +157,44 @@
 }
 
 /* ============================================================
+   DARK MODE — override all tokens when .dark is on <html>
+   ============================================================ */
+
+.dark {
+  --background:          #080f1e;
+  --foreground:          #e2e8f0;
+  --card:                #0d1b2e;
+  --card-foreground:     #e2e8f0;
+  --popover:             #0d1b2e;
+  --popover-foreground:  #e2e8f0;
+  --primary:             #e2e8f0;
+  --primary-foreground:  #080f1e;
+  --secondary:           #38bdf8;
+  --secondary-foreground:#080f1e;
+  --accent:              #00b4d8;
+  --accent-foreground:   #080f1e;
+  --muted:               #1e3a52;
+  --muted-foreground:    #94a3b8;
+  --border:              rgba(255,255,255,0.08);
+  --input:               #1a2d44;
+  --ring:                #00b4d8;
+  --destructive:         #f87171;
+  --sidebar:             #05101e;
+  --sidebar-foreground:  #cbd5e1;
+  --sidebar-primary:     #00b4d8;
+  --sidebar-primary-foreground: #05101e;
+  --sidebar-accent:      rgba(0,180,216,0.12);
+  --sidebar-accent-foreground: #e2e8f0;
+  --sidebar-border:      rgba(255,255,255,0.06);
+  --sidebar-ring:        #00b4d8;
+  --glass-bg:            rgba(13, 27, 46, 0.85);
+  --glass-border:        rgba(255,255,255,0.07);
+  --glass-shadow:        0 8px 32px rgba(0,0,0,0.5);
+
+  color-scheme: dark;
+}
+
+/* ============================================================
    BASE ELEMENT STYLES
    ============================================================ */
 

@@ -12,8 +12,7 @@ interface StatCardProps {
 function StatCard({ label, value, sub, icon, accentColor, lightColor }: StatCardProps) {
   return (
     <div
-      className="flex-1 min-w-0 rounded-2xl border border-[#e2e8f0] shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 p-5 relative overflow-hidden"
-      style={{ background: `linear-gradient(135deg, #ffffff 60%, ${lightColor} 100%)` }}
+      className="flex-1 min-w-0 rounded-2xl border border-[#e2e8f0] dark:border-white/8 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 p-5 relative overflow-hidden bg-white dark:bg-[#0d1b2e]"
     >
       {/* Ghost large number watermark */}
       <span
@@ -38,15 +37,15 @@ function StatCard({ label, value, sub, icon, accentColor, lightColor }: StatCard
 
       {/* Data */}
       <p
-        className="text-4xl font-extrabold text-[#03045e] leading-none mb-1"
+        className="text-4xl font-extrabold text-[#03045e] dark:text-white leading-none mb-1"
         style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
       >
         {value}
       </p>
-      <p className="text-[12px] font-semibold text-[#03045e] mb-0.5" style={{ letterSpacing: '-0.01em' }}>
+      <p className="text-[12px] font-semibold text-[#03045e] dark:text-slate-300 mb-0.5" style={{ letterSpacing: '-0.01em' }}>
         {label}
       </p>
-      <p className="text-[11px] text-[#94a3b8]">{sub}</p>
+      <p className="text-[11px] text-[#94a3b8] dark:text-slate-500">{sub}</p>
     </div>
   )
 }
@@ -68,7 +67,7 @@ export default function StatBar({
         sub="changelog entries live"
         icon={<Zap className="w-5 h-5" />}
         accentColor="#0077b6"
-        lightColor="#eff8ff"
+        lightColor="rgba(0, 119, 182, 0.12)"
       />
       <StatCard
         label="Pending Requests"
@@ -76,7 +75,7 @@ export default function StatBar({
         sub="awaiting your review"
         icon={<Clock className="w-5 h-5" />}
         accentColor="#d97706"
-        lightColor="#fffbeb"
+        lightColor="rgba(245, 158, 11, 0.12)"
       />
       <StatCard
         label="Total Projects"
@@ -84,7 +83,7 @@ export default function StatBar({
         sub="active workspaces"
         icon={<TrendingUp className="w-5 h-5" />}
         accentColor="#16a34a"
-        lightColor="#f0fdf4"
+        lightColor="rgba(22, 163, 74, 0.12)"
       />
     </div>
   )

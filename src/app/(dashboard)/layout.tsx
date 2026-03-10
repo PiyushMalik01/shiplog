@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#f0f9ff' }}>
+    <div className="flex h-screen overflow-hidden bg-[#f0f9ff] dark:bg-[#080f1e]">
 
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex lg:flex-shrink-0">
@@ -23,13 +23,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Mobile Top Bar */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white/70 backdrop-blur-md border-b border-[#caf0f8]">
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-white/70 dark:bg-[#0d1b2e]/80 backdrop-blur-md border-b border-[#caf0f8] dark:border-white/8">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-[#caf0f8] transition-colors cursor-pointer"
+            className="p-2 rounded-lg hover:bg-[#caf0f8] dark:hover:bg-white/8 transition-colors cursor-pointer"
             aria-label="Open menu"
           >
-            <Menu className="w-5 h-5 text-[#03045e]" />
+            <Menu className="w-5 h-5 text-[#03045e] dark:text-white" />
           </button>
           <Image
             src="/shiplog_logo1.png"

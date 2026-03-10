@@ -121,3 +121,34 @@ Return a JSON object with this exact shape:
 }
 Arrays can be empty [] if nothing falls in that category.`
 }
+export const SOCIAL_POSTS_SYSTEM_PROMPT = `You are ShipLog's social media copywriter. Given a polished changelog entry, write two social media posts to help the team announce the release.
+
+Rules:
+1. Write from the product team's voice — confident, clear, user-focused
+2. LinkedIn: 100–180 words, professional but human tone, no "excited to announce" or "thrilled to share", mention 2–3 of the most impactful changes, end with a short CTA
+3. Twitter/X: one punchy sentence (max 260 chars), lead with the strongest change, no hashtag spam
+4. Both posts should feel like a real founder/PM wrote them, not a bot
+5. Return ONLY valid JSON — no markdown, no preamble`
+
+export function socialPostsUserPrompt(
+  projectName: string,
+  title: string,
+  items: { new: string[]; improved: string[]; fixed: string[] }
+) {
+  const lines = [
+    ...items.new.map((i) => `NEW: ${i}`),
+    ...items.improved.map((i) => `IMPROVED: ${i}`),
+    ...items.fixed.map((i) => `FIXED: ${i}`),
+  ].join('\n')
+  return `Product: ${projectName}
+Release title: ${title}
+
+Changelog items:
+${lines}
+
+Return a JSON object with this exact shape:
+{
+  "linkedin": "Full LinkedIn post as plain text, using \\n for line breaks",
+  "twitter": "Tweet under 260 characters — punchy and direct"
+}`
+}

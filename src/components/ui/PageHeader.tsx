@@ -17,7 +17,7 @@ export function PageHeader({ breadcrumbs, title, subtitle, right }: PageHeaderPr
   return (
     <div className="mb-8">
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="flex items-center gap-1.5 text-[13px] text-[#64748b] mb-2">
+        <nav className="flex items-center gap-1.5 text-[13px] text-[#64748b] dark:text-slate-400 mb-2">
           {breadcrumbs.map((seg, idx) => (
             <span key={idx} className="flex items-center gap-1.5">
               {idx > 0 && <span className="text-[#cbd5e1]">›</span>}
@@ -26,7 +26,7 @@ export function PageHeader({ breadcrumbs, title, subtitle, right }: PageHeaderPr
                   {seg.label}
                 </Link>
               ) : (
-                <span className="text-[#03045e] font-medium">{seg.label}</span>
+                <span className="text-[#03045e] dark:text-white font-medium">{seg.label}</span>
               )}
             </span>
           ))}
@@ -35,13 +35,13 @@ export function PageHeader({ breadcrumbs, title, subtitle, right }: PageHeaderPr
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1
-            className="text-[26px] font-bold text-[#03045e] leading-tight"
+            className="text-[26px] font-bold text-[#03045e] dark:text-white leading-tight"
             style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
           >
             {title}
           </h1>
           {subtitle && (
-            <p className="text-[#64748b] text-[14px] mt-1">{subtitle}</p>
+            <p className="text-[#64748b] dark:text-slate-400 text-[14px] mt-1">{subtitle}</p>
           )}
         </div>
         {right && <div className="flex-shrink-0">{right}</div>}

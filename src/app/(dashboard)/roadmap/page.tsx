@@ -62,7 +62,7 @@ function AddItemForm({ columnId, onAdd, onClose }: AddItemFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#e2e8f0] p-3 mt-2 shadow-sm">
+    <form onSubmit={handleSubmit} className="bg-white dark:bg-[#0d1b2e] rounded-xl border border-[#e2e8f0] dark:border-white/8 p-3 mt-2 shadow-sm">
       <input
         type="text"
         autoFocus
@@ -70,14 +70,14 @@ function AddItemForm({ columnId, onAdd, onClose }: AddItemFormProps) {
         value={title}
         onChange={e => setTitle(e.target.value)}
         placeholder="Item title"
-        className="w-full text-sm text-[#03045e] border border-[#e2e8f0] rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] mb-2 placeholder:text-[#94a3b8]"
+        className="w-full text-sm text-[#03045e] dark:text-slate-200 border border-[#e2e8f0] dark:border-white/10 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] mb-2 placeholder:text-[#94a3b8] bg-white dark:bg-[#080f1e]"
       />
       <textarea
         value={description}
         onChange={e => setDescription(e.target.value)}
         placeholder="Description (optional)"
         rows={2}
-        className="w-full text-sm text-[#03045e] border border-[#e2e8f0] rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] mb-3 resize-none placeholder:text-[#94a3b8]"
+        className="w-full text-sm text-[#03045e] dark:text-slate-200 border border-[#e2e8f0] dark:border-white/10 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] mb-3 resize-none placeholder:text-[#94a3b8] bg-white dark:bg-[#080f1e]"
       />
       <div className="flex gap-2">
         <button
@@ -87,7 +87,7 @@ function AddItemForm({ columnId, onAdd, onClose }: AddItemFormProps) {
         >
           {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : `Add to ${COLUMNS.find(c => c.id === columnId)?.label}`}
         </button>
-        <button type="button" onClick={onClose} className="px-3 py-2 rounded-lg bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#64748b] text-xs font-semibold transition-colors">
+        <button type="button" onClick={onClose} className="px-3 py-2 rounded-lg bg-[#f1f5f9] dark:bg-white/8 hover:bg-[#e2e8f0] dark:hover:bg-white/15 text-[#64748b] dark:text-slate-400 text-xs font-semibold transition-colors">
           <X className="w-3.5 h-3.5" />
         </button>
       </div>
@@ -280,7 +280,7 @@ function RoadmapContent() {
     <div className="min-h-full p-6 md:p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
-        <h1 className="text-2xl font-bold text-[#03045e]" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>
+        <h1 className="text-2xl font-bold text-[#03045e] dark:text-white" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>
           Roadmap
         </h1>
         <div className="flex items-center gap-3">
@@ -288,14 +288,14 @@ function RoadmapContent() {
             <select
               value={selectedProject}
               onChange={e => setSelectedProject(e.target.value)}
-              className="rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-sm text-[#03045e] outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6]"
+              className="rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e] px-3 py-2 text-sm text-[#03045e] dark:text-slate-200 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6]"
             >
               {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           )}
           <button
             onClick={() => setAddingToColumn('planned')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc] text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e] text-[#475569] dark:text-slate-400 hover:bg-[#f8fafc] dark:hover:bg-white/8 text-sm font-semibold transition-colors"
           >
             <Plus className="w-4 h-4" /> Add Item
           </button>
@@ -324,10 +324,10 @@ function RoadmapContent() {
                 <div key={col.id} className="flex flex-col min-w-[280px] md:min-w-0">
                   {/* Column header */}
                   <div
-                    className="flex items-center gap-2 px-3 py-2 mb-3 rounded-xl border-l-4 bg-white border border-[#e2e8f0]"
+                    className="flex items-center gap-2 px-3 py-2 mb-3 rounded-xl border-l-4 bg-white dark:bg-[#0d1b2e] border border-[#e2e8f0] dark:border-white/8"
                     style={{ borderLeftColor: col.accent }}
                   >
-                    <span className="font-semibold text-[13px] text-[#03045e] flex-1" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>
+                    <span className="font-semibold text-[13px] text-[#03045e] dark:text-white flex-1" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>
                       {col.label}
                     </span>
                     <span
@@ -355,12 +355,12 @@ function RoadmapContent() {
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                         className={`flex-1 min-h-[120px] space-y-2.5 p-2 rounded-xl transition-colors duration-150 ${
-                          snapshot.isDraggingOver ? 'bg-[#f0f9ff]' : 'bg-transparent'
+                          snapshot.isDraggingOver ? 'bg-[#f0f9ff] dark:bg-white/5' : 'bg-transparent'
                         }`}
                       >
                         {colItems.length === 0 && !snapshot.isDraggingOver && (
-                          <div className="flex items-center justify-center h-20 rounded-xl border-2 border-dashed border-[#e2e8f0]">
-                            <p className="text-xs text-[#94a3b8]">No items yet</p>
+                          <div className="flex items-center justify-center h-20 rounded-xl border-2 border-dashed border-[#e2e8f0] dark:border-white/10">
+                            <p className="text-xs text-[#94a3b8] dark:text-slate-500">No items yet</p>
                           </div>
                         )}
 
@@ -370,7 +370,7 @@ function RoadmapContent() {
                               <div
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
-                                className={`group bg-white rounded-xl border border-[#e2e8f0] p-3.5 transition-all duration-150 ${
+                                className={`group bg-white dark:bg-[#0d1b2e] rounded-xl border border-[#e2e8f0] dark:border-white/8 p-3.5 transition-all duration-150 ${
                                   snapshot.isDragging
                                     ? 'shadow-lg scale-[1.02] border-[#0077b6]/30'
                                     : 'shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-md'
@@ -384,20 +384,20 @@ function RoadmapContent() {
                                     <GripVertical className="w-4 h-4" />
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-sm text-[#03045e] leading-snug">{item.title}</h3>
+                                    <h3 className="font-semibold text-sm text-[#03045e] dark:text-white leading-snug">{item.title}</h3>
                                     {item.ai_summary && (
-                                      <p className="text-xs text-[#64748b] mt-1 line-clamp-2">{item.ai_summary}</p>
+                                      <p className="text-xs text-[#64748b] dark:text-slate-400 mt-1 line-clamp-2">{item.ai_summary}</p>
                                     )}
                                     {!item.ai_summary && item.description && (
-                                      <p className="text-xs text-[#64748b] mt-1 line-clamp-2">{item.description}</p>
+                                      <p className="text-xs text-[#64748b] dark:text-slate-400 mt-1 line-clamp-2">{item.description}</p>
                                     )}
                                     <div className="flex items-center gap-2 mt-2">
                                       {item.vote_total > 0 && (
-                                        <span className="text-[10px] font-semibold text-[#64748b] bg-[#f1f5f9] px-1.5 py-0.5 rounded">
+                                        <span className="text-[10px] font-semibold text-[#64748b] dark:text-slate-400 bg-[#f1f5f9] dark:bg-white/8 px-1.5 py-0.5 rounded">
                                           {item.vote_total} votes
                                         </span>
                                       )}
-                                      <span className="text-[10px] text-[#94a3b8] font-mono">P{item.priority}</span>
+                                      <span className="text-[10px] text-[#94a3b8] dark:text-slate-500 font-mono">P{item.priority}</span>
                                     </div>
                                   </div>
                                   {/* Card actions */}
@@ -405,7 +405,7 @@ function RoadmapContent() {
                                     {item.status === 'done' && confirmDeleteItemId !== item.id && (
                                       <button
                                         onClick={() => openShipIt(item)}
-                                        className="relative p-1 rounded-lg text-[#94a3b8] hover:text-[#0077b6] hover:bg-[#f0f9ff] transition-colors"
+                                          className="relative p-1 rounded-lg text-[#94a3b8] hover:text-[#0077b6] hover:bg-[#f0f9ff] dark:hover:bg-white/8 transition-colors"
                                         title="Ship it — generate posts"
                                       >
                                         <Zap className="w-3.5 h-3.5" />
@@ -425,7 +425,7 @@ function RoadmapContent() {
                                         </button>
                                         <button
                                           onClick={() => setConfirmDeleteItemId(null)}
-                                          className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#f1f5f9] text-[#64748b] hover:bg-[#e2e8f0] transition-colors"
+                                          className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#f1f5f9] dark:bg-white/8 text-[#64748b] dark:text-slate-400 hover:bg-[#e2e8f0] dark:hover:bg-white/15 transition-colors"
                                         >
                                           Cancel
                                         </button>
@@ -433,7 +433,7 @@ function RoadmapContent() {
                                     ) : (
                                       <button
                                         onClick={() => setConfirmDeleteItemId(item.id)}
-                                        className="p-1 rounded-lg text-[#cbd5e1] hover:text-red-500 hover:bg-red-50 transition-colors"
+                                        className="p-1 rounded-lg text-[#cbd5e1] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                         title="Delete item"
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
@@ -460,25 +460,25 @@ function RoadmapContent() {
       {shipItItem && (
         <>
           <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setShipItItem(null)} />
-          <div className="fixed top-0 right-0 h-full w-full max-w-[460px] bg-white shadow-2xl z-50 flex flex-col border-l border-[#e2e8f0]">
+          <div className="fixed top-0 right-0 h-full w-full max-w-[460px] bg-white dark:bg-[#0d1b2e] shadow-2xl z-50 flex flex-col border-l border-[#e2e8f0] dark:border-white/8">
             {/* Header */}
-            <div className="flex items-start gap-3 p-5 border-b border-[#e2e8f0]">
+            <div className="flex items-start gap-3 p-5 border-b border-[#e2e8f0] dark:border-white/8">
               <div className="w-8 h-8 rounded-xl bg-[#03045e] flex items-center justify-center flex-shrink-0">
                 <Zap className="w-4 h-4 text-[#caf0f8]" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] font-bold text-[#0077b6] uppercase tracking-wider mb-0.5">Ship It</p>
-                <h2 className="font-bold text-[#03045e] text-[14px] leading-snug" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>{shipItItem.title}</h2>
+                <h2 className="font-bold text-[#03045e] dark:text-white text-[14px] leading-snug" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>{shipItItem.title}</h2>
               </div>
-              <button onClick={() => setShipItItem(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#64748b] hover:bg-[#f1f5f9] transition-colors flex-shrink-0">
+              <button onClick={() => setShipItItem(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#64748b] hover:bg-[#f1f5f9] dark:hover:bg-white/8 transition-colors flex-shrink-0">
                 <X className="w-4 h-4" />
               </button>
             </div>
             {/* Body */}
             <div className="flex-1 overflow-y-auto p-5 space-y-5">
               <div>
-                <label className="block text-xs font-bold text-[#03045e] mb-1">Implementation notes</label>
-                <p className="text-xs text-[#64748b] mb-2">Paste commit messages, bullet points, or rough notes about what you built. AI will generate polished posts from them.</p>
+                <label className="block text-xs font-bold text-[#03045e] dark:text-white mb-1">Implementation notes</label>
+                <p className="text-xs text-[#64748b] dark:text-slate-400 mb-2">Paste commit messages, bullet points, or rough notes about what you built. AI will generate polished posts from them.</p>
                 <textarea
                   value={shipItNotes}
                   onChange={e => {
@@ -487,7 +487,7 @@ function RoadmapContent() {
                   }}
                   rows={5}
                   placeholder="e.g. rewrote search with trigram index, added dark mode toggle, fixed nav dropdown on mobile..."
-                  className="w-full text-sm text-[#03045e] border border-[#e2e8f0] rounded-xl px-3.5 py-3 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] resize-none placeholder:text-[#94a3b8]"
+                  className="w-full text-sm text-[#03045e] dark:text-slate-200 border border-[#e2e8f0] dark:border-white/10 rounded-xl px-3.5 py-3 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] resize-none placeholder:text-[#94a3b8] bg-white dark:bg-[#080f1e]"
                 />
                 <button
                   onClick={handleShipIt}
@@ -503,22 +503,22 @@ function RoadmapContent() {
               {shipItResult && (
                 <>
                   {/* Changelog entry */}
-                  <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
-                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f8fafc] border-b border-[#e2e8f0]">
-                      <FileText className="w-3.5 h-3.5 text-[#64748b]" />
-                      <span className="text-xs font-bold text-[#03045e] flex-1">Changelog entry</span>
+                  <div className="rounded-xl border border-[#e2e8f0] dark:border-white/8 overflow-hidden">
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f8fafc] dark:bg-white/4 border-b border-[#e2e8f0] dark:border-white/8">
+                      <FileText className="w-3.5 h-3.5 text-[#64748b] dark:text-slate-400" />
+                      <span className="text-xs font-bold text-[#03045e] dark:text-white flex-1">Changelog entry</span>
                       <button onClick={() => copyShipIt('changelog', formatChangelogText(shipItResult))} className="inline-flex items-center gap-1 text-xs text-[#64748b] hover:text-[#03045e] transition-colors">
                         {shipItCopied === 'changelog' ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{shipItCopied === 'changelog' ? 'Copied' : 'Copy'}</span>
                       </button>
                     </div>
                     <div className="p-4 space-y-2.5">
-                      <p className="text-sm font-bold text-[#03045e]">{shipItResult.title}</p>
+                      <p className="text-sm font-bold text-[#03045e] dark:text-white">{shipItResult.title}</p>
                       {shipItResult.new.length > 0 && (
                         <div>
                           <p className="text-[10px] font-bold text-[#0077b6] uppercase tracking-wide mb-1.5">New</p>
                           <ul className="space-y-1">{shipItResult.new.map((t, i) => (
-                            <li key={i} className="flex items-start gap-2 text-xs text-[#334155]">
+                            <li key={i} className="flex items-start gap-2 text-xs text-[#334155] dark:text-slate-300">
                               <span className="w-1.5 h-1.5 rounded-full bg-[#0077b6] mt-1.5 flex-shrink-0" />{t}
                             </li>
                           ))}</ul>
@@ -528,7 +528,7 @@ function RoadmapContent() {
                         <div>
                           <p className="text-[10px] font-bold text-[#d97706] uppercase tracking-wide mb-1.5">Improved</p>
                           <ul className="space-y-1">{shipItResult.improved.map((t, i) => (
-                            <li key={i} className="flex items-start gap-2 text-xs text-[#334155]">
+                            <li key={i} className="flex items-start gap-2 text-xs text-[#334155] dark:text-slate-300">
                               <span className="w-1.5 h-1.5 rounded-full bg-[#d97706] mt-1.5 flex-shrink-0" />{t}
                             </li>
                           ))}</ul>
@@ -538,7 +538,7 @@ function RoadmapContent() {
                         <div>
                           <p className="text-[10px] font-bold text-[#16a34a] uppercase tracking-wide mb-1.5">Fixed</p>
                           <ul className="space-y-1">{shipItResult.fixed.map((t, i) => (
-                            <li key={i} className="flex items-start gap-2 text-xs text-[#334155]">
+                            <li key={i} className="flex items-start gap-2 text-xs text-[#334155] dark:text-slate-300">
                               <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] mt-1.5 flex-shrink-0" />{t}
                             </li>
                           ))}</ul>
@@ -556,25 +556,25 @@ function RoadmapContent() {
                   </div>
 
                   {/* LinkedIn post */}
-                  <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
-                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f8fafc] border-b border-[#e2e8f0]">
+                  <div className="rounded-xl border border-[#e2e8f0] dark:border-white/8 overflow-hidden">
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f8fafc] dark:bg-white/4 border-b border-[#e2e8f0] dark:border-white/8">
                       <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 flex-shrink-0" fill="#0077b5"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                      <span className="text-xs font-bold text-[#03045e] flex-1">LinkedIn post</span>
+                      <span className="text-xs font-bold text-[#03045e] dark:text-white flex-1">LinkedIn post</span>
                       <button onClick={() => copyShipIt('linkedin', shipItResult.linkedin)} className="inline-flex items-center gap-1 text-xs text-[#64748b] hover:text-[#03045e] transition-colors">
                         {shipItCopied === 'linkedin' ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{shipItCopied === 'linkedin' ? 'Copied' : 'Copy'}</span>
                       </button>
                     </div>
                     <div className="p-4">
-                      <pre className="text-xs text-[#334155] whitespace-pre-wrap font-sans leading-relaxed">{shipItResult.linkedin}</pre>
+                      <pre className="text-xs text-[#334155] dark:text-slate-300 whitespace-pre-wrap font-sans leading-relaxed">{shipItResult.linkedin}</pre>
                     </div>
                   </div>
 
                   {/* X / Twitter post */}
-                  <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
-                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f8fafc] border-b border-[#e2e8f0]">
+                  <div className="rounded-xl border border-[#e2e8f0] dark:border-white/8 overflow-hidden">
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f8fafc] dark:bg-white/4 border-b border-[#e2e8f0] dark:border-white/8">
                       <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
-                      <span className="text-xs font-bold text-[#03045e] flex-1">X (Twitter)</span>
+                      <span className="text-xs font-bold text-[#03045e] dark:text-white flex-1">X (Twitter)</span>
                       <span className={`text-[10px] font-mono ${shipItResult.twitter.length > 260 ? 'text-red-500 font-bold' : 'text-[#94a3b8]'}`}>
                         {shipItResult.twitter.length}/280
                       </span>
@@ -592,14 +592,14 @@ function RoadmapContent() {
                       </a>
                     </div>
                     <div className="p-4">
-                      <p className="text-xs text-[#334155] leading-relaxed">{shipItResult.twitter}</p>
+                      <p className="text-xs text-[#334155] dark:text-slate-300 leading-relaxed">{shipItResult.twitter}</p>
                     </div>
                   </div>
 
                   <button
                     onClick={handleShipIt}
                     disabled={generatingShipIt}
-                    className="w-full py-2 text-xs font-semibold text-[#64748b] hover:text-[#03045e] border border-[#e2e8f0] rounded-xl hover:bg-[#f8fafc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2 text-xs font-semibold text-[#64748b] dark:text-slate-400 hover:text-[#03045e] dark:hover:text-white border border-[#e2e8f0] dark:border-white/10 rounded-xl hover:bg-[#f8fafc] dark:hover:bg-white/6 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {generatingShipIt ? 'Regenerating...' : 'Regenerate all posts'}
                   </button>

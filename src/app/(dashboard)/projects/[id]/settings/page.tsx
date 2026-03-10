@@ -147,12 +147,12 @@ export default function ProjectSettingsPage() {
   if (loading) {
     return (
       <div className="min-h-full p-6 md:p-8 max-w-2xl mx-auto">
-        <div className="h-6 w-32 rounded-lg bg-[#f1f5f9] animate-pulse mb-8" />
-        <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 space-y-6">
+        <div className="h-6 w-32 rounded-lg bg-[#f1f5f9] dark:bg-white/8 animate-pulse mb-8" />
+        <div className="bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 p-6 space-y-6">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="space-y-2">
-              <div className="h-3 w-20 rounded bg-[#f1f5f9] animate-pulse" />
-              <div className="h-10 rounded-xl bg-[#f1f5f9] animate-pulse" />
+              <div className="h-3 w-20 rounded bg-[#f1f5f9] dark:bg-white/8 animate-pulse" />
+              <div className="h-10 rounded-xl bg-[#f1f5f9] dark:bg-white/6 animate-pulse" />
             </div>
           ))}
         </div>
@@ -183,13 +183,13 @@ export default function ProjectSettingsPage() {
       <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
         <div>
           <h1
-            className="text-[24px] font-bold text-[#03045e] leading-tight"
+            className="text-[24px] font-bold text-[#03045e] dark:text-white leading-tight"
             style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
           >
             Project Settings
           </h1>
-          <p className="text-[13px] text-[#64748b] mt-1">
-            Manage <span className="font-semibold text-[#03045e]">{project.name}</span>
+          <p className="text-[13px] text-[#64748b] dark:text-slate-400 mt-1">
+            Manage <span className="font-semibold text-[#03045e] dark:text-white">{project.name}</span>
           </p>
         </div>
         {isPublic && (
@@ -205,9 +205,9 @@ export default function ProjectSettingsPage() {
       </div>
 
       {/* General Settings */}
-      <section className="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm p-6 mb-4">
+      <section className="bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 shadow-sm p-6 mb-4">
         <h2
-          className="text-[15px] font-bold text-[#03045e] mb-5"
+          className="text-[15px] font-bold text-[#03045e] dark:text-white mb-5"
           style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
         >
           General
@@ -216,21 +216,21 @@ export default function ProjectSettingsPage() {
         <div className="space-y-5">
           {/* Name */}
           <div>
-            <label className="block text-[12px] font-semibold text-[#475569] uppercase tracking-wide mb-1.5">
+            <label className="block text-[12px] font-semibold text-[#475569] dark:text-slate-400 uppercase tracking-wide mb-1.5">
               Project Name
             </label>
             <input
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] text-[14px] text-[#03045e] placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#080f1e] text-[14px] text-[#03045e] dark:text-slate-100 placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-colors"
               placeholder="My Project"
             />
           </div>
 
           {/* Slug */}
           <div>
-            <label className="block text-[12px] font-semibold text-[#475569] uppercase tracking-wide mb-1.5">
+            <label className="block text-[12px] font-semibold text-[#475569] dark:text-slate-400 uppercase tracking-wide mb-1.5">
               URL Slug
             </label>
             <div className="flex gap-2">
@@ -240,13 +240,13 @@ export default function ProjectSettingsPage() {
                   type="text"
                   value={slug}
                   onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
-                  className="w-full pl-7 pr-4 py-2.5 rounded-xl border border-[#e2e8f0] text-[14px] text-[#03045e] font-mono placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-colors"
+                  className="w-full pl-7 pr-4 py-2.5 rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#080f1e] text-[14px] text-[#03045e] dark:text-slate-100 font-mono placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-colors"
                   placeholder="my-project"
                 />
               </div>
               <button
                 onClick={copyPublicUrl}
-                className="px-3 py-2.5 rounded-xl border border-[#e2e8f0] text-[#64748b] hover:text-[#0077b6] hover:bg-[#f0f9ff] hover:border-[#caf0f8] transition-colors cursor-pointer"
+                className="px-3 py-2.5 rounded-xl border border-[#e2e8f0] dark:border-white/10 text-[#64748b] dark:text-slate-400 hover:text-[#0077b6] hover:bg-[#f0f9ff] dark:hover:bg-white/8 hover:border-[#caf0f8] transition-colors cursor-pointer"
                 title="Copy public URL"
               >
                 {slugCopied ? <Check className="w-4 h-4 text-[#16a34a]" /> : <Copy className="w-4 h-4" />}
@@ -259,14 +259,14 @@ export default function ProjectSettingsPage() {
 
           {/* Description */}
           <div>
-            <label className="block text-[12px] font-semibold text-[#475569] uppercase tracking-wide mb-1.5">
+            <label className="block text-[12px] font-semibold text-[#475569] dark:text-slate-400 uppercase tracking-wide mb-1.5">
               Description
             </label>
             <textarea
               value={description}
               onChange={e => setDescription(e.target.value)}
               rows={3}
-              className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] text-[14px] text-[#03045e] placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-colors resize-none"
+              className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#080f1e] text-[14px] text-[#03045e] dark:text-slate-100 placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-colors resize-none"
               placeholder="A short description of your project..."
             />
           </div>
@@ -274,9 +274,9 @@ export default function ProjectSettingsPage() {
       </section>
 
       {/* Visibility */}
-      <section className="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm p-6 mb-4">
+      <section className="bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 shadow-sm p-6 mb-4">
         <h2
-          className="text-[15px] font-bold text-[#03045e] mb-4"
+          className="text-[15px] font-bold text-[#03045e] dark:text-white mb-4"
           style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
         >
           Visibility
@@ -287,13 +287,13 @@ export default function ProjectSettingsPage() {
             onClick={() => setIsPublic(true)}
             className={`flex-1 flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${
               isPublic
-                ? 'border-[#0077b6] bg-[#f0f9ff]'
-                : 'border-[#e2e8f0] hover:border-[#cbd5e1]'
+                ? 'border-[#0077b6] bg-[#f0f9ff] dark:bg-[#0077b6]/10'
+                : 'border-[#e2e8f0] dark:border-white/10 hover:border-[#cbd5e1]'
             }`}
           >
             <Globe className={`w-5 h-5 flex-shrink-0 ${isPublic ? 'text-[#0077b6]' : 'text-[#94a3b8]'}`} />
             <div className="text-left">
-              <p className={`text-[13px] font-bold ${isPublic ? 'text-[#03045e]' : 'text-[#64748b]'}`}>Public</p>
+              <p className={`text-[13px] font-bold ${isPublic ? 'text-[#03045e] dark:text-white' : 'text-[#64748b] dark:text-slate-400'}`}>Public</p>
               <p className="text-[11px] text-[#94a3b8]">Anyone with the link can view</p>
             </div>
           </button>
@@ -301,13 +301,13 @@ export default function ProjectSettingsPage() {
             onClick={() => setIsPublic(false)}
             className={`flex-1 flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${
               !isPublic
-                ? 'border-[#0077b6] bg-[#f0f9ff]'
-                : 'border-[#e2e8f0] hover:border-[#cbd5e1]'
+                ? 'border-[#0077b6] bg-[#f0f9ff] dark:bg-[#0077b6]/10'
+                : 'border-[#e2e8f0] dark:border-white/10 hover:border-[#cbd5e1]'
             }`}
           >
             <Lock className={`w-5 h-5 flex-shrink-0 ${!isPublic ? 'text-[#0077b6]' : 'text-[#94a3b8]'}`} />
             <div className="text-left">
-              <p className={`text-[13px] font-bold ${!isPublic ? 'text-[#03045e]' : 'text-[#64748b]'}`}>Private</p>
+              <p className={`text-[13px] font-bold ${!isPublic ? 'text-[#03045e] dark:text-white' : 'text-[#64748b] dark:text-slate-400'}`}>Private</p>
               <p className="text-[11px] text-[#94a3b8]">Only you can access</p>
             </div>
           </button>
@@ -322,7 +322,7 @@ export default function ProjectSettingsPage() {
           className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[13px] font-bold shadow-sm transition-all cursor-pointer ${
             hasChanges
               ? 'bg-[#0077b6] hover:bg-[#023e8a] text-white'
-              : 'bg-[#f1f5f9] text-[#94a3b8] cursor-not-allowed'
+              : 'bg-[#f1f5f9] dark:bg-white/8 text-[#94a3b8] cursor-not-allowed'
           }`}
         >
           <Save className="w-4 h-4" />
@@ -331,14 +331,14 @@ export default function ProjectSettingsPage() {
       </div>
 
       {/* Embed Widget */}
-      <section className="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm p-6 mb-4">
+      <section className="bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 shadow-sm p-6 mb-4">
         <h2
-          className="text-[15px] font-bold text-[#03045e] mb-1"
+          className="text-[15px] font-bold text-[#03045e] dark:text-white mb-1"
           style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
         >
           Embed on Your Website
         </h2>
-        <p className="text-[12px] text-[#64748b] mb-5">
+        <p className="text-[12px] text-[#64748b] dark:text-slate-400 mb-5">
           Drop this snippet anywhere on your site to show your live changelog in an inline frame.
         </p>
 
@@ -372,14 +372,14 @@ export default function ProjectSettingsPage() {
       </section>
 
       {/* Danger Zone */}
-      <section className="bg-white rounded-2xl border border-red-200 shadow-sm p-6">
+      <section className="bg-white dark:bg-[#0d1b2e] rounded-2xl border border-red-200 dark:border-red-900/40 shadow-sm p-6">
         <h2
           className="text-[15px] font-bold text-red-600 mb-1"
           style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
         >
           Danger Zone
         </h2>
-        <p className="text-[12px] text-[#64748b] mb-4">
+        <p className="text-[12px] text-[#64748b] dark:text-slate-400 mb-4">
           Deleting a project permanently removes all its changelogs, feature requests, and roadmap items.
         </p>
 
@@ -400,7 +400,7 @@ export default function ProjectSettingsPage() {
               type="text"
               value={deleteInput}
               onChange={e => setDeleteInput(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-red-200 text-[13px] text-[#03045e] placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-400 transition-colors mb-3"
+              className="w-full px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-900/50 bg-white dark:bg-[#080f1e] text-[13px] text-[#03045e] dark:text-slate-100 placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-400 transition-colors mb-3"
               placeholder={project.name}
               autoFocus
             />
@@ -411,7 +411,7 @@ export default function ProjectSettingsPage() {
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-bold transition-colors cursor-pointer ${
                   deleteInput === project.name
                     ? 'bg-red-600 hover:bg-red-700 text-white'
-                    : 'bg-[#f1f5f9] text-[#94a3b8] cursor-not-allowed'
+                    : 'bg-[#f1f5f9] dark:bg-white/8 text-[#94a3b8] cursor-not-allowed'
                 }`}
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -419,7 +419,7 @@ export default function ProjectSettingsPage() {
               </button>
               <button
                 onClick={() => { setShowDeleteConfirm(false); setDeleteInput('') }}
-                className="px-4 py-2 rounded-xl text-[12px] font-semibold text-[#64748b] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl text-[12px] font-semibold text-[#64748b] dark:text-slate-400 hover:bg-[#f1f5f9] dark:hover:bg-white/8 transition-colors cursor-pointer"
               >
                 Cancel
               </button>

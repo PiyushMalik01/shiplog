@@ -91,9 +91,9 @@ export default function DashboardPage() {
 
       {/* Onboarding checklist — only when setup incomplete */}
       {showOnboarding && (
-        <div className="mb-6 rounded-2xl border border-[#bae6fd] bg-gradient-to-r from-[#eff8ff] to-[#f0f9ff] p-5">
+        <div className="mb-6 rounded-2xl border border-[#bae6fd] dark:border-[#0077b6]/30 bg-gradient-to-r from-[#eff8ff] to-[#f0f9ff] dark:from-[#0a1628] dark:to-[#0d1b2e] p-5">
           <p className="text-[11px] font-bold text-[#0077b6] uppercase tracking-wider mb-2">Get started</p>
-          <h3 className="font-bold text-[#03045e] mb-3" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>You're almost live — 3 steps to go</h3>
+          <h3 className="font-bold text-[#03045e] dark:text-white mb-3" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>You're almost live — 3 steps to go</h3>
           <div className="space-y-2">
             {[
               { done: true, label: 'Create your first project', href: null },
@@ -116,7 +116,7 @@ export default function DashboardPage() {
                 {step.href && !step.done ? (
                   <Link href={step.href} className="text-sm text-[#0077b6] font-medium hover:underline">{step.label}</Link>
                 ) : (
-                  <span className={`text-sm ${step.done ? 'line-through text-[#94a3b8]' : 'text-[#334155] font-medium'}`}>{step.label}</span>
+                  <span className={`text-sm ${step.done ? 'line-through text-[#94a3b8]' : 'text-[#334155] dark:text-slate-200 font-medium'}`}>{step.label}</span>
                 )}
               </div>
             ))}
@@ -140,7 +140,7 @@ export default function DashboardPage() {
           {/* Projects heading row */}
           <div className="flex items-center justify-between mb-5">
             <h2
-              className="text-lg font-bold text-[#03045e]"
+              className="text-lg font-bold text-[#03045e] dark:text-white"
               style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
             >
               Your Projects
@@ -161,17 +161,17 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : projects.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 px-6 bg-white rounded-2xl border border-[#e2e8f0] shadow-sm text-center">
+            <div className="flex flex-col items-center justify-center py-24 px-6 bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 shadow-sm text-center">
               <div className="w-16 h-16 rounded-2xl bg-[#eff8ff] flex items-center justify-center mb-5">
                 <FolderOpen className="w-7 h-7 text-[#0077b6]" />
               </div>
               <h3
-                className="text-xl font-bold text-[#03045e] mb-2"
+                className="text-xl font-bold text-[#03045e] dark:text-white mb-2"
                 style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
               >
                 No projects yet
               </h3>
-              <p className="text-[#64748b] text-sm max-w-xs mb-6">
+              <p className="text-[#64748b] dark:text-slate-400 text-sm max-w-xs mb-6">
                 Create your first project to start shipping changelogs and collecting feature requests.
               </p>
               <Link

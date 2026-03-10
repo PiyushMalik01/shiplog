@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
-import { Sparkles, Loader2, AlertCircle, RotateCcw, Plus, Trash2 } from 'lucide-react'
+import { Sparkles, Loader2, AlertCircle, RotateCcw, Plus, Trash2, Share2, Copy, Check, Linkedin } from 'lucide-react'
 import type { Project, AIChangelogResponse } from '@/types'
 
 const CATEGORY_CONFIG = {
@@ -47,6 +47,9 @@ function NewChangelogContent() {
   const [generateError, setGenerateError] = useState('')
   const [editingId, setEditingId] = useState<string | null>(null)
   const [loadingEdit, setLoadingEdit] = useState(false)
+  const [socialPosts, setSocialPosts] = useState<{ linkedin: string; twitter: string } | null>(null)
+  const [generatingSocial, setGeneratingSocial] = useState(false)
+  const [copiedKey, setCopiedKey] = useState<string | null>(null)
   const searchParams = useSearchParams()
   const router = useRouter()
   const supabase = createClient()
@@ -163,6 +166,37 @@ function NewChangelogContent() {
     setEditedItems(prev => ({ ...prev, [cat]: [...prev[cat], ''] }))
   }
 
+  async function handleGenerateSocial() {
+    if (!result) return
+    setGeneratingSocial(true)
+    setSocialPosts(null)
+    const project = projects.find(p => p.id === selectedProject)
+    try {
+      const res = await fetch('/api/ai/social-posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_name: project?.name ?? 'Product',
+          title: editedTitle,
+          items: editedItems,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok || data.error) throw new Error(data.error || 'Failed to generate')
+      setSocialPosts(data)
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Social posts generation failed')
+    } finally {
+      setGeneratingSocial(false)
+    }
+  }
+
+  function copyToClipboard(text: string, key: string) {
+    navigator.clipboard.writeText(text)
+    setCopiedKey(key)
+    setTimeout(() => setCopiedKey(null), 2000)
+  }
+
   const charCount = rawInput.length
 
   return (
@@ -170,9 +204,9 @@ function NewChangelogContent() {
       {/* Page header */}
       <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div>
-          <p className="text-[11px] font-semibold text-[#64748b] uppercase tracking-widest mb-1">Changelog / New Entry</p>
+          <p className="text-[11px] font-semibold text-[#64748b] dark:text-slate-400 uppercase tracking-widest mb-1">Changelog / New Entry</p>
           <h1
-            className="text-2xl font-bold text-[#03045e]"
+            className="text-2xl font-bold text-[#03045e] dark:text-white"
             style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
           >
             AI Changelog Writer
@@ -182,7 +216,7 @@ function NewChangelogContent() {
           <select
             value={selectedProject}
             onChange={e => setSelectedProject(e.target.value)}
-            className="rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-sm text-[#03045e] outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6]"
+            className="rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e] px-3 py-2 text-sm text-[#03045e] dark:text-slate-200 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6]"
           >
             {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
@@ -202,7 +236,7 @@ function NewChangelogContent() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* ── Left column: Input ── */}
         <div className="flex flex-col gap-4">
-          <p className="text-[11px] font-semibold text-[#64748b] uppercase tracking-widest">Raw Input</p>
+          <p className="text-[11px] font-semibold text-[#64748b] dark:text-slate-400 uppercase tracking-widest">Raw Input</p>
 
           <div className="relative">
             <textarea
@@ -211,7 +245,7 @@ function NewChangelogContent() {
               onChange={e => setRawInput(e.target.value)}
               maxLength={2000}
               rows={12}
-              className="w-full rounded-xl border border-[#e2e8f0] bg-white px-4 py-3 text-sm font-mono text-[#03045e] placeholder:text-[#94a3b8] outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-all resize-none"
+              className="w-full rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e] px-4 py-3 text-sm font-mono text-[#03045e] dark:text-slate-200 placeholder:text-[#94a3b8] outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-all resize-none"
               placeholder={`fix login bug for OAuth users\nadd dark mode to settings\nrefactor database layer — 3x performance\nrate limit the public API\nfix typo in onboarding email\nadd CSV export to dashboard`}
             />
             <span className="absolute bottom-3 right-3 text-[11px] text-[#94a3b8] font-mono select-none">
@@ -221,12 +255,12 @@ function NewChangelogContent() {
 
           <div className="flex items-end gap-3">
             <div>
-              <label className="block text-[13px] font-semibold text-[#03045e] mb-1.5">Version <span className="font-normal text-[#94a3b8]">(optional)</span></label>
+              <label className="block text-[13px] font-semibold text-[#03045e] dark:text-slate-200 mb-1.5">Version <span className="font-normal text-[#94a3b8]">(optional)</span></label>
               <input
                 type="text"
                 value={version}
                 onChange={e => setVersion(e.target.value)}
-                className="w-40 rounded-xl border border-[#e2e8f0] bg-white px-3 py-2.5 text-sm text-[#03045e] font-mono outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-all placeholder:text-[#94a3b8]"
+                className="w-40 rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e] px-3 py-2.5 text-sm text-[#03045e] dark:text-slate-200 font-mono outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] transition-all placeholder:text-[#94a3b8]"
                 placeholder="v1.2.0"
               />
             </div>
@@ -261,10 +295,10 @@ function NewChangelogContent() {
 
         {/* ── Right column: Output ── */}
         <div className="flex flex-col gap-4">
-          <p className="text-[11px] font-semibold text-[#64748b] uppercase tracking-widest">AI Output</p>
+          <p className="text-[11px] font-semibold text-[#64748b] dark:text-slate-400 uppercase tracking-widest">AI Output</p>
 
           {!result ? (
-            <div className="flex-1 flex flex-col items-center justify-center min-h-[300px] rounded-xl border-2 border-dashed border-[#e2e8f0] text-center p-8">
+            <div className="flex-1 flex flex-col items-center justify-center min-h-[300px] rounded-xl border-2 border-dashed border-[#e2e8f0] dark:border-white/10 text-center p-8">
               <Sparkles className="w-8 h-8 text-[#cbd5e1] mb-3" />
               <p className="text-sm text-[#94a3b8]">Your polished changelog will appear here</p>
               <p className="text-xs text-[#cbd5e1] mt-1">Paste raw notes and click Generate</p>
@@ -272,12 +306,12 @@ function NewChangelogContent() {
           ) : (
             <div className="flex flex-col gap-4">
               {/* Output card */}
-              <div className="bg-white rounded-xl border border-[#e2e8f0] p-5">
+              <div className="bg-white dark:bg-[#0d1b2e] rounded-xl border border-[#e2e8f0] dark:border-white/8 p-5">
                 <input
                   type="text"
                   value={editedTitle}
                   onChange={e => setEditedTitle(e.target.value)}
-                  className="w-full bg-transparent text-[18px] font-bold text-[#03045e] outline-none border-b border-transparent focus:border-[#0077b6] pb-1 mb-4 transition-colors placeholder:text-[#94a3b8]"
+                  className="w-full bg-transparent text-[18px] font-bold text-[#03045e] dark:text-white outline-none border-b border-transparent focus:border-[#0077b6] pb-1 mb-4 transition-colors placeholder:text-[#94a3b8]"
                   style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
                   placeholder="Changelog title"
                 />
@@ -299,7 +333,7 @@ function NewChangelogContent() {
                               type="text"
                               value={item}
                               onChange={e => updateItem(cat, i, e.target.value)}
-                              className="flex-1 text-sm text-[#03045e] bg-transparent py-0.5 outline-none border-b border-transparent focus:border-[#0077b6] transition-colors placeholder:text-[#94a3b8]"
+                              className="flex-1 text-sm text-[#03045e] dark:text-slate-200 bg-transparent py-0.5 outline-none border-b border-transparent focus:border-[#0077b6] transition-colors placeholder:text-[#94a3b8]"
                               placeholder="Enter item..."
                             />
                             <button
@@ -327,7 +361,7 @@ function NewChangelogContent() {
                 <button
                   onClick={() => handleSave(false)}
                   disabled={saving || publishing}
-                  className="flex-1 rounded-xl border border-[#e2e8f0] bg-white text-[#475569] hover:bg-[#f8fafc] font-semibold py-2.5 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e] text-[#475569] dark:text-slate-400 hover:bg-[#f8fafc] dark:hover:bg-white/8 font-semibold py-2.5 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : 'Save as Draft'}
                 </button>
@@ -338,6 +372,66 @@ function NewChangelogContent() {
                 >
                   {publishing ? <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</> : 'Save & Publish'}
                 </button>
+              </div>
+
+              {/* Social posts */}
+              <div className="border-t border-[#e2e8f0] dark:border-white/8 pt-4 mt-2">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Share2 className="w-4 h-4 text-[#0077b6]" />
+                    <span className="text-[13px] font-semibold text-[#03045e] dark:text-white">Social Posts</span>
+                    <span className="text-[11px] text-[#94a3b8] dark:text-slate-500">AI-generated from your changelog</span>
+                  </div>
+                  <button
+                    onClick={handleGenerateSocial}
+                    disabled={generatingSocial}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#03045e] hover:bg-[#0077b6] text-white text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {generatingSocial
+                      ? <><Loader2 className="w-3 h-3 animate-spin" /> Generating…</>
+                      : <><Sparkles className="w-3 h-3" /> {socialPosts ? 'Regenerate' : 'Generate'}</>
+                    }
+                  </button>
+                </div>
+
+                {socialPosts && (
+                  <div className="space-y-3">
+                    {/* LinkedIn */}
+                    <div className="rounded-xl border border-[#e2e8f0] dark:border-white/8 bg-[#f8fafc] dark:bg-white/4 p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-1.5">
+                          <Linkedin className="w-3.5 h-3.5 text-[#0a66c2]" />
+                          <span className="text-[11px] font-bold uppercase tracking-widest text-[#0a66c2]">LinkedIn</span>
+                        </div>
+                        <button
+                          onClick={() => copyToClipboard(socialPosts.linkedin, 'linkedin')}
+                          className="inline-flex items-center gap-1 text-[11px] text-[#64748b] dark:text-slate-400 hover:text-[#03045e] dark:hover:text-white transition-colors"
+                        >
+                          {copiedKey === 'linkedin' ? <><Check className="w-3 h-3 text-[#16a34a]" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
+                        </button>
+                      </div>
+                      <p className="text-sm text-[#475569] dark:text-slate-300 whitespace-pre-wrap leading-relaxed">{socialPosts.linkedin}</p>
+                    </div>
+
+                    {/* Twitter/X */}
+                    <div className="rounded-xl border border-[#e2e8f0] dark:border-white/8 bg-[#f8fafc] dark:bg-white/4 p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-1.5">
+                          <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                          <span className="text-[11px] font-bold uppercase tracking-widest">X</span>
+                          <span className="text-[10px] text-[#94a3b8] ml-1">{socialPosts.twitter.length}/260</span>
+                        </div>
+                        <button
+                          onClick={() => copyToClipboard(socialPosts.twitter, 'twitter')}
+                          className="inline-flex items-center gap-1 text-[11px] text-[#64748b] dark:text-slate-400 hover:text-[#03045e] dark:hover:text-white transition-colors"
+                        >
+                          {copiedKey === 'twitter' ? <><Check className="w-3 h-3 text-[#16a34a]" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
+                        </button>
+                      </div>
+                      <p className="text-sm text-[#475569] dark:text-slate-300 whitespace-pre-wrap leading-relaxed">{socialPosts.twitter}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

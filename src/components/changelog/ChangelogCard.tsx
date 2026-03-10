@@ -13,24 +13,24 @@ export function ChangelogCard({ title, version, content, publishedAt }: {
   publishedAt?: string | null
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-[#e2e8f0] p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+    <div className="bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-4">
         <div>
           {version && (
-            <span className="inline-block font-mono text-[11px] text-[#64748b] bg-[#f1f5f9] px-2 py-0.5 rounded mb-2">
+            <span className="inline-block font-mono text-[11px] text-[#64748b] dark:text-slate-400 bg-[#f1f5f9] dark:bg-white/8 px-2 py-0.5 rounded mb-2">
               v{version}
             </span>
           )}
           <h3
-            className="text-[18px] font-bold text-[#03045e] leading-snug"
+            className="text-[18px] font-bold text-[#03045e] dark:text-white leading-snug"
             style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
           >
             {title}
           </h3>
         </div>
         {publishedAt && (
-          <span className="flex-shrink-0 text-[12px] text-[#94a3b8] mt-1">
+          <span className="flex-shrink-0 text-[12px] text-[#94a3b8] dark:text-slate-500 mt-1">
             {new Date(publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </span>
         )}
@@ -47,7 +47,7 @@ export function ChangelogCard({ title, version, content, publishedAt }: {
               <p className={`text-[11px] font-bold uppercase tracking-widest mb-1.5 ${cfg.text}`}>{cfg.label}</p>
               <ul className="space-y-1.5">
                 {items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-[#475569]">
+                  <li key={i} className="flex items-start gap-2 text-sm text-[#475569] dark:text-slate-300">
                     <span className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${cfg.dot}`} />
                     {item}
                   </li>

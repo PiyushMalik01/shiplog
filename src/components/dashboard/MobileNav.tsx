@@ -42,10 +42,10 @@ export default function MobileNav({
               <Sidebar />
               <button
                 onClick={onClose}
-                className="absolute top-4 right-[-44px] w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-lg cursor-pointer"
+                className="absolute top-4 right-[-44px] w-9 h-9 rounded-full bg-white dark:bg-[#0d1b2e] flex items-center justify-center shadow-lg cursor-pointer"
                 aria-label="Close menu"
               >
-                <X className="w-4 h-4 text-[#03045e]" />
+                <X className="w-4 h-4 text-[#03045e] dark:text-white" />
               </button>
             </div>
           </motion.div>

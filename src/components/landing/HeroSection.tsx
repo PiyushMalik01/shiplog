@@ -117,10 +117,10 @@ export default function HeroSection() {
             Create Your Project →
           </Link>
           <Link
-            href="#how-it-works"
+            href="#ai-magic"
             className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-sm sm:text-base font-semibold border border-white/30 text-white hover:bg-white/10 transition-all duration-200 cursor-pointer"
           >
-            View Live Demo
+            Try Live Demo
           </Link>
         </motion.div>
 

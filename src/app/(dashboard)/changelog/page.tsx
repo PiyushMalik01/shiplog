@@ -145,13 +145,13 @@ function ChangelogContent() {
       <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <h1
-            className="text-2xl font-bold text-[#03045e]"
+            className="text-2xl font-bold text-[#03045e] dark:text-white"
             style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
           >
             Changelog
           </h1>
           {selectedProjectName && (
-            <span className="text-xs font-semibold text-[#64748b] bg-[#e0f4fb] px-2.5 py-1 rounded-lg">
+            <span className="text-xs font-semibold text-[#64748b] dark:text-slate-400 bg-[#e0f4fb] dark:bg-white/8 px-2.5 py-1 rounded-lg">
               {selectedProjectName}
             </span>
           )}
@@ -164,7 +164,7 @@ function ChangelogContent() {
                 setSelectedProject(e.target.value)
                 setSelectedProjectName(projects.find(p => p.id === e.target.value)?.name ?? '')
               }}
-              className="rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-sm text-[#03045e] outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6]"
+              className="rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e] px-3 py-2 text-sm text-[#03045e] dark:text-slate-200 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6]"
             >
               {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
@@ -172,7 +172,7 @@ function ChangelogContent() {
           <button
             onClick={handleGenerateEmail}
             disabled={generatingEmail || !selectedProject}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f0f9ff] hover:border-[#caf0f8] text-[#475569] hover:text-[#0077b6] text-sm font-semibold transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e] hover:bg-[#f0f9ff] dark:hover:bg-white/8 hover:border-[#caf0f8] text-[#475569] dark:text-slate-400 hover:text-[#0077b6] text-sm font-semibold transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {generatingEmail
               ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -192,22 +192,22 @@ function ChangelogContent() {
 
       {/* Email draft panel */}
       {showEmailPanel && (
-        <div className="mb-6 bg-white rounded-2xl border border-[#e2e8f0] shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#f1f5f9]">
+        <div className="mb-6 bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#f1f5f9] dark:border-white/6">
             <div>
               <h2
-                className="text-[15px] font-bold text-[#03045e]"
+                className="text-[15px] font-bold text-[#03045e] dark:text-white"
                 style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
               >
                 Weekly Update Email Draft
               </h2>
-              <p className="text-[12px] text-[#94a3b8] mt-0.5">
+              <p className="text-[12px] text-[#94a3b8] dark:text-slate-500 mt-0.5">
                 Generated from your {emailDraft ? 'recent published entries' : 'changelog'}
               </p>
             </div>
             <button
               onClick={() => setShowEmailPanel(false)}
-              className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] dark:hover:bg-white/8 transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -222,16 +222,16 @@ function ChangelogContent() {
             <div className="p-6 space-y-4">
               {/* Subject */}
               <div>
-                <p className="text-[11px] font-semibold text-[#475569] uppercase tracking-wide mb-2">Subject</p>
-                <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[14px] font-semibold text-[#03045e]">
+                <p className="text-[11px] font-semibold text-[#475569] dark:text-slate-400 uppercase tracking-wide mb-2">Subject</p>
+                <div className="px-4 py-3 rounded-xl bg-[#f8fafc] dark:bg-white/6 border border-[#e2e8f0] dark:border-white/8 text-[14px] font-semibold text-[#03045e] dark:text-white">
                   {emailDraft.subject}
                 </div>
               </div>
 
               {/* Body */}
               <div>
-                <p className="text-[11px] font-semibold text-[#475569] uppercase tracking-wide mb-2">Body</p>
-                <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[13px] text-[#334155] whitespace-pre-wrap leading-relaxed font-[DM_Sans,sans-serif] min-h-[120px]">
+                <p className="text-[11px] font-semibold text-[#475569] dark:text-slate-400 uppercase tracking-wide mb-2">Body</p>
+                <div className="px-4 py-3 rounded-xl bg-[#f8fafc] dark:bg-white/6 border border-[#e2e8f0] dark:border-white/8 text-[13px] text-[#334155] dark:text-slate-300 whitespace-pre-wrap leading-relaxed font-[DM_Sans,sans-serif] min-h-[120px]">
                   {emailDraft.body}
                 </div>
               </div>
@@ -247,7 +247,7 @@ function ChangelogContent() {
                 </button>
                 <button
                   onClick={handleGenerateEmail}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#e2e8f0] text-[13px] font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#e2e8f0] dark:border-white/10 text-[13px] font-semibold text-[#475569] dark:text-slate-400 hover:bg-[#f1f5f9] dark:hover:bg-white/8 transition-colors cursor-pointer"
                 >
                   Regenerate
                 </button>
@@ -259,7 +259,7 @@ function ChangelogContent() {
 
       {/* Filter bar */}
       <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
-        <div className="flex gap-0 border-b border-[#e2e8f0]">
+        <div className="flex gap-0 border-b border-[#e2e8f0] dark:border-white/10">
           {tabs.map(t => (
             <button
               key={t.id}
@@ -267,7 +267,7 @@ function ChangelogContent() {
               className={`px-4 py-2 text-sm font-medium transition-all duration-150 border-b-2 -mb-px ${
                 tab === t.id
                   ? 'border-[#0077b6] text-[#0077b6]'
-                  : 'border-transparent text-[#64748b] hover:text-[#03045e]'
+                  : 'border-transparent text-[#64748b] dark:text-slate-400 hover:text-[#03045e] dark:hover:text-white'
               }`}
             >
               {t.label}
@@ -281,7 +281,7 @@ function ChangelogContent() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search entries..."
-            className="pl-9 pr-4 py-2 text-sm rounded-xl border border-[#e2e8f0] bg-white text-[#03045e] outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] placeholder:text-[#94a3b8] w-56 transition-all"
+            className="pl-9 pr-4 py-2 text-sm rounded-xl border border-[#e2e8f0] dark:border-white/10 bg-white dark:bg-[#0d1b2e] text-[#03045e] dark:text-slate-200 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] placeholder:text-[#94a3b8] w-56 transition-all"
           />
         </div>
       </div>
@@ -292,12 +292,12 @@ function ChangelogContent() {
           <Loader2 className="w-5 h-5 animate-spin" /> Loading entries...
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 bg-white rounded-2xl border border-[#e2e8f0] text-center">
+        <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 text-center">
           <ScrollText className="w-12 h-12 text-[#94a3b8] mb-4" />
-          <h3 className="text-lg font-bold text-[#03045e] mb-1" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>
+          <h3 className="text-lg font-bold text-[#03045e] dark:text-white mb-1" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>
             {entries.length === 0 ? 'No changelog entries yet' : 'No entries match your filters'}
           </h3>
-          <p className="text-sm text-[#64748b] max-w-xs mb-6">
+          <p className="text-sm text-[#64748b] dark:text-slate-400 max-w-xs mb-6">
             {entries.length === 0
               ? 'Write your first update to let users know what you\'ve been building.'
               : 'Try changing your search or filter.'}
@@ -319,7 +319,7 @@ function ChangelogContent() {
             return (
               <div
                 key={entry.id}
-                className="group relative bg-white rounded-xl border border-[#e2e8f0] overflow-hidden hover:shadow-sm transition-all duration-150"
+                className="group relative bg-white dark:bg-[#0d1b2e] rounded-xl border border-[#e2e8f0] dark:border-white/8 overflow-hidden hover:shadow-sm transition-all duration-150"
               >
                 {/* Left status bar */}
                 <div
@@ -330,23 +330,23 @@ function ChangelogContent() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       {entry.version && (
-                        <span className="font-mono text-[11px] text-[#64748b] bg-[#f1f5f9] px-2 py-0.5 rounded">
+                      <span className="font-mono text-[11px] text-[#64748b] dark:text-slate-400 bg-[#f1f5f9] dark:bg-white/8 px-2 py-0.5 rounded">
                           v{entry.version}
                         </span>
                       )}
-                      <h3 className="font-semibold text-[#03045e] text-[15px]">{entry.title}</h3>
+                      <h3 className="font-semibold text-[#03045e] dark:text-white text-[15px]">{entry.title}</h3>
                     </div>
                     <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                      <span className="text-xs text-[#94a3b8]">
+                      <span className="text-xs text-[#94a3b8] dark:text-slate-500">
                         {new Date(entry.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
                       <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${
-                        entry.is_published ? 'bg-[#dcfce7] text-[#16a34a]' : 'bg-[#fef9c3] text-[#a16207]'
+                        entry.is_published ? 'bg-[#dcfce7] text-[#16a34a]' : 'bg-[#fef9c3] dark:bg-yellow-900/30 text-[#a16207] dark:text-yellow-400'
                       }`}>
                         {entry.is_published ? 'Published' : 'Draft'}
                       </span>
                       {totalItems > 0 && (
-                        <span className="text-[11px] text-[#94a3b8]">
+                        <span className="text-[11px] text-[#94a3b8] dark:text-slate-500">
                           {entry.content.new?.length > 0 && `${entry.content.new.length} New`}
                           {entry.content.new?.length > 0 && entry.content.improved?.length > 0 && ' · '}
                           {entry.content.improved?.length > 0 && `${entry.content.improved.length} Improved`}
@@ -380,7 +380,7 @@ function ChangelogContent() {
                       <>
                         <Link
                           href={`/changelog/new?edit=${entry.id}`}
-                          className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#f1f5f9] text-[#475569] hover:bg-[#e2e8f0] transition-colors no-underline"
+                          className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#f1f5f9] dark:bg-white/8 text-[#475569] dark:text-slate-300 hover:bg-[#e2e8f0] dark:hover:bg-white/15 transition-colors no-underline"
                         >
                           Edit
                         </Link>
