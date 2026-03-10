@@ -144,5 +144,12 @@ create policy "owners can delete comments" on comments for delete
     )
   );
 
+-- Atomic vote increment function (avoids read-then-write race condition)
+create or replace function increment_vote_count(request_id uuid)
+returns void language sql security definer as $$
+  update feature_requests set vote_count = vote_count + 1 where id = request_id;
+$$;
+
 -- Migration (run if upgrading an existing database):
 -- ALTER TABLE comments ADD COLUMN IF NOT EXISTS is_admin boolean DEFAULT false;
+-- Run the increment_vote_count function above if upgrading from an older schema.

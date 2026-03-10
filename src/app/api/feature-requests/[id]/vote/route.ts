@@ -21,13 +21,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
   if (voteError) return NextResponse.json({ error: voteError.message }, { status: 500 })
 
-  // Increment vote count: read then write
-  const { data: request } = await supabase.from('feature_requests')
-    .select('vote_count').eq('id', id).single()
-
-  await supabase.from('feature_requests')
-    .update({ vote_count: (request?.vote_count ?? 0) + 1 })
-    .eq('id', id)
+  // Atomic increment via DB function (avoids read-then-write race condition)
+  await supabase.rpc('increment_vote_count', { request_id: id })
 
   return NextResponse.json({ success: true })
 }

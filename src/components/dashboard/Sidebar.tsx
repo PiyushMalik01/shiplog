@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { cn } from '@/lib/cn'
+import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import {
