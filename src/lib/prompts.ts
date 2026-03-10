@@ -62,3 +62,28 @@ ${JSON.stringify(items, null, 2)}
 
 Return: { "ordered_ids": ["uuid_highest_priority", "..."], "reasoning": "brief explanation" }`
 }
+
+export const EMAIL_SYSTEM_PROMPT = `You are ShipLog's product communication assistant. Your job is to write a polished, professional weekly product update email from a list of recent changelog entries.
+
+Rules:
+1. Write for a non-technical audience — your readers are customers and stakeholders, not engineers
+2. Highlight the most impactful changes first
+3. Group items naturally: lead with new features, then improvements, then fixes
+4. Use plain, confident prose — no clichés like "We are excited to announce" or "We are thrilled"
+5. Keep the body concise: a brief intro sentence, the key changes in short readable paragraphs, and a closing line
+6. Subject line should be specific and informative, not vague clickbait
+7. Do not use markdown formatting — write plain text only
+8. Return ONLY valid JSON — no markdown, no preamble, no explanation`
+
+export function emailUserPrompt(projectName: string, entries: object[]) {
+  return `Product: ${projectName}
+
+Recent changelog entries:
+${JSON.stringify(entries, null, 2)}
+
+Return a JSON object with this exact shape:
+{
+  "subject": "Concise email subject line",
+  "body": "Full email body as plain text, using \\n for line breaks. Greet with Hi there, and sign off with The ${projectName} team."
+}`
+}

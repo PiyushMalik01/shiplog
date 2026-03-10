@@ -31,6 +31,7 @@ export default function ProjectSettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleteInput, setDeleteInput] = useState('')
   const [slugCopied, setSlugCopied] = useState(false)
+  const [embedCopied, setEmbedCopied] = useState(false)
 
   // Form state
   const [name, setName] = useState('')
@@ -133,6 +134,14 @@ export default function ProjectSettingsPage() {
     navigator.clipboard.writeText(`${window.location.origin}/${slug}`)
     setSlugCopied(true)
     setTimeout(() => setSlugCopied(false), 2000)
+  }
+
+  function copyEmbedCode() {
+    if (!project) return
+    const code = `<iframe\n  src="${window.location.origin}/widget/${slug}"\n  width="100%"\n  height="480"\n  style="border: none; border-radius: 12px;"\n  title="${project.name} Changelog"\n></iframe>`
+    navigator.clipboard.writeText(code)
+    setEmbedCopied(true)
+    setTimeout(() => setEmbedCopied(false), 2000)
   }
 
   if (loading) {
@@ -320,6 +329,47 @@ export default function ProjectSettingsPage() {
           {saving ? 'Saving...' : 'Save Changes'}
         </button>
       </div>
+
+      {/* Embed Widget */}
+      <section className="bg-white rounded-2xl border border-[#e2e8f0] shadow-sm p-6 mb-4">
+        <h2
+          className="text-[15px] font-bold text-[#03045e] mb-1"
+          style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
+        >
+          Embed on Your Website
+        </h2>
+        <p className="text-[12px] text-[#64748b] mb-5">
+          Drop this snippet anywhere on your site to show your live changelog in an inline frame.
+        </p>
+
+        {/* Code block */}
+        <div className="relative rounded-xl bg-[#0f172a] overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
+            <span className="text-[10px] font-semibold text-[#64748b] uppercase tracking-wider">HTML</span>
+            <button
+              onClick={copyEmbedCode}
+              className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#94a3b8] hover:text-white transition-colors cursor-pointer"
+            >
+              {embedCopied ? <Check className="w-3 h-3 text-[#22c55e]" /> : <Copy className="w-3 h-3" />}
+              {embedCopied ? 'Copied' : 'Copy'}
+            </button>
+          </div>
+          <pre
+            className="px-5 py-4 text-[12px] text-[#94a3b8] font-mono leading-relaxed overflow-x-auto whitespace-pre"
+            style={{ margin: 0 }}
+          >{`<iframe
+  src="${typeof window !== 'undefined' ? window.location.origin : ''}/widget/${slug}"
+  width="100%"
+  height="480"
+  style="border: none; border-radius: 12px;"
+  title="${project.name} Changelog"
+></iframe>`}</pre>
+        </div>
+
+        <p className="text-[11px] text-[#94a3b8] mt-3">
+          The widget loads your published changelog entries and updates automatically when you publish new ones.
+        </p>
+      </section>
 
       {/* Danger Zone */}
       <section className="bg-white rounded-2xl border border-red-200 shadow-sm p-6">

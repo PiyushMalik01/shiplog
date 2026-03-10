@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-import { ScrollText, Search, PenLine, Loader2 } from 'lucide-react'
+import { ScrollText, Search, PenLine, Loader2, Mail, X, Copy, Check } from 'lucide-react'
 import type { ChangelogEntry, Project } from '@/types'
 
 type Tab = 'all' | 'published' | 'drafts'
@@ -21,6 +21,10 @@ function ChangelogContent() {
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [generatingEmail, setGeneratingEmail] = useState(false)
+  const [showEmailPanel, setShowEmailPanel] = useState(false)
+  const [emailDraft, setEmailDraft] = useState<{ subject: string; body: string } | null>(null)
+  const [emailCopied, setEmailCopied] = useState(false)
   const searchParams = useSearchParams()
   const supabase = createClient()
 
@@ -90,6 +94,39 @@ function ChangelogContent() {
     setConfirmDeleteId(null)
   }
 
+  async function handleGenerateEmail() {
+    if (!selectedProject) { toast.error('Select a project first'); return }
+    setGeneratingEmail(true)
+    setShowEmailPanel(true)
+    setEmailDraft(null)
+    try {
+      const res = await fetch('/api/ai/generate-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_id: selectedProject, project_name: selectedProjectName }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to generate email draft')
+        setShowEmailPanel(false)
+      } else {
+        setEmailDraft(data)
+      }
+    } catch {
+      toast.error('Failed to generate email draft')
+      setShowEmailPanel(false)
+    }
+    setGeneratingEmail(false)
+  }
+
+  function copyEmailToClipboard() {
+    if (!emailDraft) return
+    const text = `Subject: ${emailDraft.subject}\n\n${emailDraft.body}`
+    navigator.clipboard.writeText(text)
+    setEmailCopied(true)
+    setTimeout(() => setEmailCopied(false), 2000)
+  }
+
   const filtered = entries.filter(e => {
     const matchesTab = tab === 'all' ? true : tab === 'published' ? e.is_published : !e.is_published
     const matchesSearch = !search || e.title.toLowerCase().includes(search.toLowerCase())
@@ -132,6 +169,17 @@ function ChangelogContent() {
               {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           )}
+          <button
+            onClick={handleGenerateEmail}
+            disabled={generatingEmail || !selectedProject}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#e2e8f0] bg-white hover:bg-[#f0f9ff] hover:border-[#caf0f8] text-[#475569] hover:text-[#0077b6] text-sm font-semibold transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {generatingEmail
+              ? <Loader2 className="w-4 h-4 animate-spin" />
+              : <Mail className="w-4 h-4" />
+            }
+            Weekly Update
+          </button>
           <Link
             href={`/changelog/new${selectedProject ? `?project_id=${selectedProject}` : ''}`}
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0077b6] hover:bg-[#023e8a] text-white text-sm font-semibold transition-colors duration-150 no-underline"
@@ -141,6 +189,73 @@ function ChangelogContent() {
           </Link>
         </div>
       </div>
+
+      {/* Email draft panel */}
+      {showEmailPanel && (
+        <div className="mb-6 bg-white rounded-2xl border border-[#e2e8f0] shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[#f1f5f9]">
+            <div>
+              <h2
+                className="text-[15px] font-bold text-[#03045e]"
+                style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
+              >
+                Weekly Update Email Draft
+              </h2>
+              <p className="text-[12px] text-[#94a3b8] mt-0.5">
+                Generated from your {emailDraft ? 'recent published entries' : 'changelog'}
+              </p>
+            </div>
+            <button
+              onClick={() => setShowEmailPanel(false)}
+              className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#475569] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {generatingEmail ? (
+            <div className="flex flex-col items-center justify-center py-14 gap-3 text-[#64748b]">
+              <Loader2 className="w-6 h-6 animate-spin text-[#0077b6]" />
+              <p className="text-[13px]">Writing your update email...</p>
+            </div>
+          ) : emailDraft ? (
+            <div className="p-6 space-y-4">
+              {/* Subject */}
+              <div>
+                <p className="text-[11px] font-semibold text-[#475569] uppercase tracking-wide mb-2">Subject</p>
+                <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[14px] font-semibold text-[#03045e]">
+                  {emailDraft.subject}
+                </div>
+              </div>
+
+              {/* Body */}
+              <div>
+                <p className="text-[11px] font-semibold text-[#475569] uppercase tracking-wide mb-2">Body</p>
+                <div className="px-4 py-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[13px] text-[#334155] whitespace-pre-wrap leading-relaxed font-[DM_Sans,sans-serif] min-h-[120px]">
+                  {emailDraft.body}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-3 pt-1">
+                <button
+                  onClick={copyEmailToClipboard}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0077b6] hover:bg-[#023e8a] text-white text-[13px] font-semibold transition-colors cursor-pointer"
+                >
+                  {emailCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  {emailCopied ? 'Copied' : 'Copy to clipboard'}
+                </button>
+                <button
+                  onClick={handleGenerateEmail}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[#e2e8f0] text-[13px] font-semibold text-[#475569] hover:bg-[#f1f5f9] transition-colors cursor-pointer"
+                >
+                  Regenerate
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {/* Filter bar */}
       <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
