@@ -87,3 +87,37 @@ Return a JSON object with this exact shape:
   "body": "Full email body as plain text, using \\n for line breaks. Greet with Hi there, and sign off with The ${projectName} team."
 }`
 }
+
+export const SHIP_IT_SYSTEM_PROMPT = `You are ShipLog's launch communication assistant. When a product team ships a completed roadmap item, you write three pieces of content from their raw implementation notes:
+
+1. A structured changelog entry for users (categorised as new / improved / fixed)
+2. A professional LinkedIn post (150–200 words, confident and informative, no clichés)
+3. A punchy X/Twitter post (under 260 characters, no hashtag spam)
+
+Rules:
+1. Write from the end-user's perspective — what they gain, not what the developer did
+2. Changelog items should be one clear sentence each
+3. LinkedIn tone: proud, measured product lead update — never use "excited to announce" or "thrilled to share"
+4. Twitter post: one strong sentence, maybe a second for context — direct, no filler
+5. Return ONLY valid JSON — no markdown fences, no preamble`
+
+export function shipItUserPrompt(projectName: string, itemTitle: string, rawNotes: string) {
+  return `Product: ${projectName}
+Roadmap item shipped: ${itemTitle}
+
+Implementation notes from the team:
+---
+${rawNotes}
+---
+
+Return a JSON object with this exact shape:
+{
+  "title": "Short release title (for the changelog header)",
+  "new": ["User-facing description of new capability"],
+  "improved": ["User-facing description of improvement"],
+  "fixed": ["User-facing description of bug fix"],
+  "linkedin": "Full LinkedIn post as plain text, using \\n for line breaks",
+  "twitter": "Tweet text under 260 characters — no hashtags unless essential"
+}
+Arrays can be empty [] if nothing falls in that category.`
+}

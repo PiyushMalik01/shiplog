@@ -1,11 +1,11 @@
 ﻿'use client'
 
 import { useEffect, useState, useCallback, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd'
 import toast from 'react-hot-toast'
-import { Sparkles, Loader2, Plus, GripVertical, X, Trash2 } from 'lucide-react'
+import { Sparkles, Loader2, Plus, GripVertical, X, Trash2, Zap, Copy, Check, FileText, Send } from 'lucide-react'
 import type { RoadmapItem, Project } from '@/types'
 
 const COLUMNS = [
@@ -15,6 +15,23 @@ const COLUMNS = [
 ] as const
 
 type ColumnId = typeof COLUMNS[number]['id']
+
+interface ShipItResult {
+  title: string
+  new: string[]
+  improved: string[]
+  fixed: string[]
+  linkedin: string
+  twitter: string
+}
+
+function formatChangelogText(result: ShipItResult): string {
+  const lines: string[] = [result.title]
+  if (result.new.length) { lines.push('', 'NEW'); result.new.forEach(t => lines.push(`- ${t}`)) }
+  if (result.improved.length) { lines.push('', 'IMPROVED'); result.improved.forEach(t => lines.push(`- ${t}`)) }
+  if (result.fixed.length) { lines.push('', 'FIXED'); result.fixed.forEach(t => lines.push(`- ${t}`)) }
+  return lines.join('\n')
+}
 
 interface AddItemFormProps {
   columnId: ColumnId
@@ -78,7 +95,14 @@ function RoadmapContent() {
   const [addingToColumn, setAddingToColumn] = useState<ColumnId | null>(null)
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
   const [confirmDeleteItemId, setConfirmDeleteItemId] = useState<string | null>(null)
+  const [shipItItem, setShipItItem] = useState<RoadmapItem | null>(null)
+  const [shipItNotes, setShipItNotes] = useState('')
+  const [shipItResult, setShipItResult] = useState<ShipItResult | null>(null)
+  const [generatingShipIt, setGeneratingShipIt] = useState(false)
+  const [shipItCopied, setShipItCopied] = useState<string | null>(null)
+  const [savingChangelog, setSavingChangelog] = useState(false)
   const searchParams = useSearchParams()
+  const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
@@ -169,6 +193,70 @@ function RoadmapContent() {
     }
     setDeletingItemId(null)
     setConfirmDeleteItemId(null)
+  }
+
+  function openShipIt(item: RoadmapItem) {
+    setShipItItem(item)
+    setShipItNotes('')
+    setShipItResult(null)
+    setShipItCopied(null)
+  }
+
+  async function handleShipIt() {
+    if (!shipItItem || !shipItNotes.trim()) return
+    const project = projects.find(p => p.id === selectedProject)
+    setGeneratingShipIt(true)
+    try {
+      const res = await fetch('/api/ai/ship-it', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_id: selectedProject,
+          project_name: project?.name ?? 'Your Product',
+          item_title: shipItItem.title,
+          raw_notes: shipItNotes,
+        }),
+      })
+      if (!res.ok) throw new Error('Generation failed')
+      const data = await res.json()
+      setShipItResult(data)
+    } catch {
+      toast.error('Failed to generate posts')
+    } finally {
+      setGeneratingShipIt(false)
+    }
+  }
+
+  async function handleSaveChangelog() {
+    if (!shipItResult || !selectedProject || !shipItItem) return
+    setSavingChangelog(true)
+    try {
+      const res = await fetch('/api/changelogs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_id: selectedProject,
+          title: shipItResult.title,
+          content: { new: shipItResult.new, improved: shipItResult.improved, fixed: shipItResult.fixed },
+          is_published: false,
+          raw_input: `Shipped: ${shipItItem.title}\n\n${shipItNotes}`,
+        }),
+      })
+      if (!res.ok) throw new Error('Save failed')
+      toast.success('Saved as draft — review and publish in Changelog')
+      router.push('/changelog')
+    } catch {
+      toast.error('Failed to save changelog draft')
+    } finally {
+      setSavingChangelog(false)
+    }
+  }
+
+  function copyShipIt(key: string, text: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      setShipItCopied(key)
+      setTimeout(() => setShipItCopied(null), 1500)
+    })
   }
 
   function getColumnItems(status: string) {
@@ -299,8 +387,17 @@ function RoadmapContent() {
                                       <span className="text-[10px] text-[#94a3b8] font-mono">P{item.priority}</span>
                                     </div>
                                   </div>
-                                  {/* Delete control */}
-                                  <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  {/* Card actions */}
+                                  <div className="flex-shrink-0 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {item.status === 'done' && confirmDeleteItemId !== item.id && (
+                                      <button
+                                        onClick={() => openShipIt(item)}
+                                        className="p-1 rounded-lg text-[#94a3b8] hover:text-[#0077b6] hover:bg-[#f0f9ff] transition-colors"
+                                        title="Ship it — generate posts"
+                                      >
+                                        <Zap className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
                                     {confirmDeleteItemId === item.id ? (
                                       <div className="flex flex-col gap-1">
                                         <button
@@ -341,6 +438,157 @@ function RoadmapContent() {
             })}
           </div>
         </DragDropContext>
+      )}
+
+      {/* Ship It drawer */}
+      {shipItItem && (
+        <>
+          <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setShipItItem(null)} />
+          <div className="fixed top-0 right-0 h-full w-full max-w-[460px] bg-white shadow-2xl z-50 flex flex-col border-l border-[#e2e8f0]">
+            {/* Header */}
+            <div className="flex items-start gap-3 p-5 border-b border-[#e2e8f0]">
+              <div className="w-8 h-8 rounded-xl bg-[#03045e] flex items-center justify-center flex-shrink-0">
+                <Zap className="w-4 h-4 text-[#caf0f8]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-bold text-[#0077b6] uppercase tracking-wider mb-0.5">Ship It</p>
+                <h2 className="font-bold text-[#03045e] text-[14px] leading-snug" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>{shipItItem.title}</h2>
+              </div>
+              <button onClick={() => setShipItItem(null)} className="p-1.5 rounded-lg text-[#94a3b8] hover:text-[#64748b] hover:bg-[#f1f5f9] transition-colors flex-shrink-0">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-[#03045e] mb-1">Implementation notes</label>
+                <p className="text-xs text-[#64748b] mb-2">Paste commit messages, bullet points, or rough notes about what you built. AI will generate polished posts from them.</p>
+                <textarea
+                  value={shipItNotes}
+                  onChange={e => setShipItNotes(e.target.value)}
+                  rows={5}
+                  placeholder="e.g. rewrote search with trigram index, added dark mode toggle, fixed nav dropdown on mobile..."
+                  className="w-full text-sm text-[#03045e] border border-[#e2e8f0] rounded-xl px-3.5 py-3 outline-none focus:ring-2 focus:ring-[#0077b6]/20 focus:border-[#0077b6] resize-none placeholder:text-[#94a3b8]"
+                />
+                <button
+                  onClick={handleShipIt}
+                  disabled={generatingShipIt || !shipItNotes.trim()}
+                  className="mt-3 w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#03045e] hover:bg-[#0077b6] text-white text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {generatingShipIt
+                    ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</>
+                    : <><Sparkles className="w-4 h-4" /> Generate posts</>}
+                </button>
+              </div>
+
+              {shipItResult && (
+                <>
+                  {/* Changelog entry */}
+                  <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f8fafc] border-b border-[#e2e8f0]">
+                      <FileText className="w-3.5 h-3.5 text-[#64748b]" />
+                      <span className="text-xs font-bold text-[#03045e] flex-1">Changelog entry</span>
+                      <button onClick={() => copyShipIt('changelog', formatChangelogText(shipItResult))} className="inline-flex items-center gap-1 text-xs text-[#64748b] hover:text-[#03045e] transition-colors">
+                        {shipItCopied === 'changelog' ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span>{shipItCopied === 'changelog' ? 'Copied' : 'Copy'}</span>
+                      </button>
+                    </div>
+                    <div className="p-4 space-y-2.5">
+                      <p className="text-sm font-bold text-[#03045e]">{shipItResult.title}</p>
+                      {shipItResult.new.length > 0 && (
+                        <div>
+                          <p className="text-[10px] font-bold text-[#0077b6] uppercase tracking-wide mb-1.5">New</p>
+                          <ul className="space-y-1">{shipItResult.new.map((t, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-[#334155]">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#0077b6] mt-1.5 flex-shrink-0" />{t}
+                            </li>
+                          ))}</ul>
+                        </div>
+                      )}
+                      {shipItResult.improved.length > 0 && (
+                        <div>
+                          <p className="text-[10px] font-bold text-[#d97706] uppercase tracking-wide mb-1.5">Improved</p>
+                          <ul className="space-y-1">{shipItResult.improved.map((t, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-[#334155]">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#d97706] mt-1.5 flex-shrink-0" />{t}
+                            </li>
+                          ))}</ul>
+                        </div>
+                      )}
+                      {shipItResult.fixed.length > 0 && (
+                        <div>
+                          <p className="text-[10px] font-bold text-[#16a34a] uppercase tracking-wide mb-1.5">Fixed</p>
+                          <ul className="space-y-1">{shipItResult.fixed.map((t, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-[#334155]">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#16a34a] mt-1.5 flex-shrink-0" />{t}
+                            </li>
+                          ))}</ul>
+                        </div>
+                      )}
+                      <button
+                        onClick={handleSaveChangelog}
+                        disabled={savingChangelog}
+                        className="mt-1 w-full inline-flex items-center justify-center gap-1.5 py-2 rounded-lg bg-[#03045e] hover:bg-[#0077b6] text-white text-xs font-bold transition-colors disabled:opacity-50"
+                      >
+                        {savingChangelog ? <Loader2 className="w-3 h-3 animate-spin" /> : <FileText className="w-3 h-3" />}
+                        {savingChangelog ? 'Saving...' : 'Save as draft in Changelog'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* LinkedIn post */}
+                  <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f8fafc] border-b border-[#e2e8f0]">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 flex-shrink-0" fill="#0077b5"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                      <span className="text-xs font-bold text-[#03045e] flex-1">LinkedIn post</span>
+                      <button onClick={() => copyShipIt('linkedin', shipItResult.linkedin)} className="inline-flex items-center gap-1 text-xs text-[#64748b] hover:text-[#03045e] transition-colors">
+                        {shipItCopied === 'linkedin' ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span>{shipItCopied === 'linkedin' ? 'Copied' : 'Copy'}</span>
+                      </button>
+                    </div>
+                    <div className="p-4">
+                      <pre className="text-xs text-[#334155] whitespace-pre-wrap font-sans leading-relaxed">{shipItResult.linkedin}</pre>
+                    </div>
+                  </div>
+
+                  {/* X / Twitter post */}
+                  <div className="rounded-xl border border-[#e2e8f0] overflow-hidden">
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#f8fafc] border-b border-[#e2e8f0]">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+                      <span className="text-xs font-bold text-[#03045e] flex-1">X (Twitter)</span>
+                      <span className={`text-[10px] font-mono ${shipItResult.twitter.length > 260 ? 'text-red-500 font-bold' : 'text-[#94a3b8]'}`}>
+                        {shipItResult.twitter.length}/280
+                      </span>
+                      <button onClick={() => copyShipIt('twitter', shipItResult.twitter)} className="ml-2 inline-flex items-center gap-1 text-xs text-[#64748b] hover:text-[#03045e] transition-colors">
+                        {shipItCopied === 'twitter' ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span>{shipItCopied === 'twitter' ? 'Copied' : 'Copy'}</span>
+                      </button>
+                      <a
+                        href={`https://x.com/intent/tweet?text=${encodeURIComponent(shipItResult.twitter)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-1.5 inline-flex items-center gap-1 text-[10px] font-bold bg-black text-white px-2 py-0.5 rounded-md hover:bg-[#333] transition-colors"
+                      >
+                        <Send className="w-2.5 h-2.5" /> Share
+                      </a>
+                    </div>
+                    <div className="p-4">
+                      <p className="text-xs text-[#334155] leading-relaxed">{shipItResult.twitter}</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleShipIt}
+                    disabled={generatingShipIt}
+                    className="w-full py-2 text-xs font-semibold text-[#64748b] hover:text-[#03045e] border border-[#e2e8f0] rounded-xl hover:bg-[#f8fafc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {generatingShipIt ? 'Regenerating...' : 'Regenerate all posts'}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
