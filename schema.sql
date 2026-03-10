@@ -76,6 +76,7 @@ create table comments (
   feature_request_id uuid not null references feature_requests(id) on delete cascade,
   author_name text,
   body text not null,
+  is_admin boolean default false,
   created_at timestamptz default now()
 );
 
@@ -134,3 +135,14 @@ create policy "votes are public" on votes for select using (true);
 -- Comments
 create policy "anyone can comment" on comments for insert with check (true);
 create policy "comments are public" on comments for select using (true);
+create policy "owners can delete comments" on comments for delete
+  using (
+    feature_request_id in (
+      select fr.id from feature_requests fr
+      join projects p on fr.project_id = p.id
+      where p.user_id = auth.uid()
+    )
+  );
+
+-- Migration (run if upgrading an existing database):
+-- ALTER TABLE comments ADD COLUMN IF NOT EXISTS is_admin boolean DEFAULT false;

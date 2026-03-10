@@ -64,6 +64,7 @@ export interface Comment {
   feature_request_id: string
   author_name: string | null
   body: string
+  is_admin: boolean
   created_at: string
 }
 

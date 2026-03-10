@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd'
 import toast from 'react-hot-toast'
-import { Sparkles, Loader2, Plus, GripVertical, X } from 'lucide-react'
+import { Sparkles, Loader2, Plus, GripVertical, X, Trash2 } from 'lucide-react'
 import type { RoadmapItem, Project } from '@/types'
 
 const COLUMNS = [
@@ -76,6 +76,8 @@ function RoadmapContent() {
   const [loading, setLoading] = useState(true)
   const [prioritizing, setPrioritizing] = useState(false)
   const [addingToColumn, setAddingToColumn] = useState<ColumnId | null>(null)
+  const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
+  const [confirmDeleteItemId, setConfirmDeleteItemId] = useState<string | null>(null)
   const searchParams = useSearchParams()
   const supabase = createClient()
 
@@ -154,6 +156,19 @@ function RoadmapContent() {
     } else {
       toast.error('Failed to add item')
     }
+  }
+
+  async function handleDeleteItem(id: string) {
+    setDeletingItemId(id)
+    const res = await fetch(`/api/roadmap/${id}`, { method: 'DELETE' })
+    if (res.ok) {
+      setItems(prev => prev.filter(i => i.id !== id))
+      toast.success('Item removed')
+    } else {
+      toast.error('Failed to delete item')
+    }
+    setDeletingItemId(null)
+    setConfirmDeleteItemId(null)
   }
 
   function getColumnItems(status: string) {
@@ -283,6 +298,34 @@ function RoadmapContent() {
                                       )}
                                       <span className="text-[10px] text-[#94a3b8] font-mono">P{item.priority}</span>
                                     </div>
+                                  </div>
+                                  {/* Delete control */}
+                                  <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {confirmDeleteItemId === item.id ? (
+                                      <div className="flex flex-col gap-1">
+                                        <button
+                                          onClick={() => handleDeleteItem(item.id)}
+                                          disabled={deletingItemId === item.id}
+                                          className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+                                        >
+                                          {deletingItemId === item.id ? <Loader2 className="w-2.5 h-2.5 animate-spin" /> : 'Delete'}
+                                        </button>
+                                        <button
+                                          onClick={() => setConfirmDeleteItemId(null)}
+                                          className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#f1f5f9] text-[#64748b] hover:bg-[#e2e8f0] transition-colors"
+                                        >
+                                          Cancel
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <button
+                                        onClick={() => setConfirmDeleteItemId(item.id)}
+                                        className="p-1 rounded-lg text-[#cbd5e1] hover:text-red-500 hover:bg-red-50 transition-colors"
+                                        title="Delete item"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
                                   </div>
                                 </div>
                               </div>

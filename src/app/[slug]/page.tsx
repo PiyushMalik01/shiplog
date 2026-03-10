@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import { PublicHeader } from '@/components/public/PublicHeader'
 import { ChangelogCard } from '@/components/changelog/ChangelogCard'
 import { FeatureRequestForm } from '@/components/public/FeatureRequestForm'
-import { VoteButton } from '@/components/public/VoteButton'
+import { PublicRequestItem } from '@/components/public/PublicRequestItem'
 import type { FeatureRequest } from '@/types'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -16,13 +16,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${project.name} — Changelog`,
     description: project.description ?? `What's new in ${project.name}`,
   }
-}
-
-const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  open:        { bg: 'bg-[#f1f5f9]', text: 'text-[#475569]', label: 'Open' },
-  planned:     { bg: 'bg-[#eff8ff]', text: 'text-[#0077b6]', label: 'Planned' },
-  in_progress: { bg: 'bg-[#fef9c3]', text: 'text-[#a16207]', label: 'In Progress' },
-  done:        { bg: 'bg-[#dcfce7]', text: 'text-[#16a34a]', label: 'Done' },
 }
 
 export default async function PublicChangelogPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -113,28 +106,9 @@ export default async function PublicChangelogPage({ params }: { params: Promise<
           {/* Existing requests */}
           {requests && requests.length > 0 && (
             <div className="space-y-2 mb-8">
-              {(requests as FeatureRequest[]).map(req => {
-                const style = STATUS_STYLES[req.status] ?? STATUS_STYLES.open
-                return (
-                  <div
-                    key={req.id}
-                    className="flex items-center gap-4 bg-white rounded-xl border border-[#e2e8f0] px-4 py-3 hover:shadow-sm transition-shadow"
-                  >
-                    <VoteButton requestId={req.id} initialCount={req.vote_count} />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-semibold text-[14px] text-[#03045e]">{req.title}</h3>
-                        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${style.bg} ${style.text}`}>
-                          {style.label}
-                        </span>
-                      </div>
-                      {req.description && (
-                        <p className="text-xs text-[#64748b] mt-0.5 truncate">{req.description}</p>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
+              {(requests as FeatureRequest[]).map(req => (
+                <PublicRequestItem key={req.id} req={req} />
+              ))}
             </div>
           )}
 
