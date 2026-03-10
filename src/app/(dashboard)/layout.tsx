@@ -5,11 +5,13 @@ import { Menu } from 'lucide-react'
 import Sidebar from '@/components/dashboard/Sidebar'
 import MobileNav from '@/components/dashboard/MobileNav'
 import Image from 'next/image'
+import { ThemeProvider } from '@/components/ThemeProvider'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
+    <ThemeProvider>
     <div className="flex h-screen overflow-hidden bg-[#f0f9ff] dark:bg-[#080f1e]">
 
       {/* Desktop Sidebar */}
@@ -49,5 +51,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </main>
       </div>
     </div>
+    </ThemeProvider>
   )
 }
