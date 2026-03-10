@@ -20,7 +20,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://shiplog.app'),
-  title: "ShipLog — AI-Powered Changelog & Roadmap",
+  title: "ShipLog",
   description: "Turn messy developer notes into polished, user-facing changelogs in seconds with AI.",
   keywords: ["changelog", "roadmap", "AI", "SaaS", "indie maker"],
   openGraph: {
