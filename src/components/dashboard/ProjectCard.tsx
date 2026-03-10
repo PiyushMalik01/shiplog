@@ -1,11 +1,23 @@
 'use client'
 
 import Link from 'next/link'
-import { Settings, ExternalLink, PenLine, Map, Link2, Check, Globe, Lock } from 'lucide-react'
+import { Settings, ExternalLink, PenLine, Map, Link2, Check, Globe, Lock, Zap } from 'lucide-react'
 import { useState } from 'react'
 import type { Project } from '@/types'
 
-export default function ProjectCard({ project }: { project: Project }) {
+function relativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 60) return `${mins}m ago`
+  const hrs = Math.floor(mins / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  if (days < 30) return `${days}d ago`
+  const months = Math.floor(days / 30)
+  return `${months}mo ago`
+}
+
+export default function ProjectCard({ project, lastShipped }: { project: Project; lastShipped?: string | null }) {
   const [copied, setCopied] = useState(false)
 
   function copyLink() {
@@ -62,7 +74,15 @@ export default function ProjectCard({ project }: { project: Project }) {
         </div>
 
         {/* Meta row */}
-        <p className="text-[10px] text-[#94a3b8] mb-4">Created {created}</p>
+        <div className="flex items-center gap-2 mb-4">
+          <p className="text-[10px] text-[#94a3b8]">Created {created}</p>
+          {lastShipped && (
+            <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold text-[#16a34a] bg-[#f0fdf4] px-1.5 py-0.5 rounded-md border border-[#bbf7d0]">
+              <Zap className="w-2.5 h-2.5" />
+              Shipped {relativeTime(lastShipped)}
+            </span>
+          )}
+        </div>
 
         {/* Actions */}
         <div className="flex gap-2 pt-3 border-t border-[#f1f5f9]">

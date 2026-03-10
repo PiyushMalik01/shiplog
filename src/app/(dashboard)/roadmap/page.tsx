@@ -405,10 +405,13 @@ function RoadmapContent() {
                                     {item.status === 'done' && confirmDeleteItemId !== item.id && (
                                       <button
                                         onClick={() => openShipIt(item)}
-                                        className="p-1 rounded-lg text-[#94a3b8] hover:text-[#0077b6] hover:bg-[#f0f9ff] transition-colors"
+                                        className="relative p-1 rounded-lg text-[#94a3b8] hover:text-[#0077b6] hover:bg-[#f0f9ff] transition-colors"
                                         title="Ship it — generate posts"
                                       >
                                         <Zap className="w-3.5 h-3.5" />
+                                        {!loadShipItCache(item.id)?.draftId && (
+                                          <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse" />
+                                        )}
                                       </button>
                                     )}
                                     {confirmDeleteItemId === item.id ? (

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { Plus, FolderOpen } from 'lucide-react'
+import { Plus, FolderOpen, CheckCircle2, Circle } from 'lucide-react'
 import type { Project } from '@/types'
 import DashboardHeader from '@/components/dashboard/DashboardHeader'
 import StatBar from '@/components/dashboard/StatBar'
@@ -17,6 +17,7 @@ export default function DashboardPage() {
   const [userName, setUserName] = useState('there')
   const [publishedUpdates, setPublishedUpdates] = useState(0)
   const [pendingRequests, setPendingRequests] = useState(0)
+  const [lastShipped, setLastShipped] = useState<Record<string, string>>({})
 
   useEffect(() => {
     const supabase = createClient()
@@ -44,6 +45,7 @@ export default function DashboardPage() {
         const [
           { count: published },
           { count: pending },
+          { data: latestEntries },
         ] = await Promise.all([
           supabase
             .from('changelog_entries')
@@ -55,9 +57,21 @@ export default function DashboardPage() {
             .select('*', { count: 'exact', head: true })
             .in('project_id', ids)
             .eq('status', 'open'),
+          supabase
+            .from('changelog_entries')
+            .select('project_id, published_at')
+            .in('project_id', ids)
+            .eq('is_published', true)
+            .order('published_at', { ascending: false }),
         ])
         setPublishedUpdates(published ?? 0)
         setPendingRequests(pending ?? 0)
+        // Build a map of projectId -> most recent published_at
+        const map: Record<string, string> = {}
+        for (const e of (latestEntries ?? [])) {
+          if (e.project_id && !map[e.project_id]) map[e.project_id] = e.published_at
+        }
+        setLastShipped(map)
       }
 
       setLoading(false)
@@ -68,9 +82,47 @@ export default function DashboardPage() {
 
   const projectIds = projects.map(p => p.id)
 
+  const firstProject = projects[0]
+  const showOnboarding = !loading && projects.length > 0 && publishedUpdates === 0
+
   return (
     <div className="min-h-full p-6 md:p-8">
       <DashboardHeader name={userName} />
+
+      {/* Onboarding checklist — only when setup incomplete */}
+      {showOnboarding && (
+        <div className="mb-6 rounded-2xl border border-[#bae6fd] bg-gradient-to-r from-[#eff8ff] to-[#f0f9ff] p-5">
+          <p className="text-[11px] font-bold text-[#0077b6] uppercase tracking-wider mb-2">Get started</p>
+          <h3 className="font-bold text-[#03045e] mb-3" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>You're almost live — 3 steps to go</h3>
+          <div className="space-y-2">
+            {[
+              { done: true, label: 'Create your first project', href: null },
+              {
+                done: false,
+                label: 'Write and publish your first changelog entry',
+                href: firstProject ? `/changelog/new?project=${firstProject.id}` : '/changelog/new',
+              },
+              {
+                done: firstProject?.is_public ?? false,
+                label: 'Make your project public so users can submit requests',
+                href: firstProject ? `/projects/${firstProject.id}/settings` : '/projects',
+              },
+            ].map((step, i) => (
+              <div key={i} className="flex items-center gap-3">
+                {step.done
+                  ? <CheckCircle2 className="w-4 h-4 text-[#16a34a] flex-shrink-0" />
+                  : <Circle className="w-4 h-4 text-[#cbd5e1] flex-shrink-0" />
+                }
+                {step.href && !step.done ? (
+                  <Link href={step.href} className="text-sm text-[#0077b6] font-medium hover:underline">{step.label}</Link>
+                ) : (
+                  <span className={`text-sm ${step.done ? 'line-through text-[#94a3b8]' : 'text-[#334155] font-medium'}`}>{step.label}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Stat bar */}
       <div className="mb-8">
@@ -133,7 +185,7 @@ export default function DashboardPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {projects.map(project => (
-                <ProjectCard key={project.id} project={project} />
+                <ProjectCard key={project.id} project={project} lastShipped={lastShipped[project.id] ?? null} />
               ))}
             </div>
           )}

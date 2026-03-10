@@ -49,22 +49,13 @@ export default function Footer() {
           <p className="text-xs uppercase tracking-widest text-[#0077b6] font-semibold mb-4">Connect</p>
           <div className="flex gap-3">
             <a
-              href="https://github.com/piyushmalik"
+              href="https://github.com/PiyushMalik01/shiplog"
               target="_blank"
               rel="noopener noreferrer"
               className="w-9 h-9 rounded-lg border border-[#0077b6]/40 flex items-center justify-center text-[#90e0ef] hover:text-[#00b4d8] hover:border-[#00b4d8] transition-all duration-200"
               aria-label="GitHub"
             >
               <Github size={16} />
-            </a>
-            <a
-              href="https://twitter.com/piyushmalik"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-lg border border-[#0077b6]/40 flex items-center justify-center text-[#90e0ef] hover:text-[#00b4d8] hover:border-[#00b4d8] transition-all duration-200"
-              aria-label="Twitter"
-            >
-              <Twitter size={16} />
             </a>
           </div>
         </div>
@@ -73,7 +64,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-[#0077b6]/30">
         <div className="max-w-6xl mx-auto px-6 md:px-16 py-5 text-center text-[#90e0ef] text-xs">
-          Built for AGIREADY.io Hiring Drive 2026 · Made with ❤️ by{' '}
+           Made with ❤️ by{' '}
           <span className="text-[#00b4d8]">Piyush Malik</span>
         </div>
       </div>

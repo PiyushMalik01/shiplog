@@ -4,8 +4,77 @@ import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
-import { Inbox, GitBranch, Loader2, ChevronDown, ChevronUp, MessageSquare, Send, Trash2 } from 'lucide-react'
+import { Inbox, GitBranch, Loader2, ChevronDown, ChevronUp, MessageSquare, Send, Trash2, BarChart2 } from 'lucide-react'
 import type { FeatureRequest, Project, Comment } from '@/types'
+
+const VOTE_COLORS = [
+  '#0077b6', '#16a34a', '#d97706', '#7c3aed', '#dc2626', '#0891b2',
+  '#65a30d', '#ea580c', '#9333ea', '#0284c7',
+]
+
+function DonutChart({ requests }: { requests: FeatureRequest[] }) {
+  const withVotes = [...requests].filter(r => r.vote_count > 0).sort((a, b) => b.vote_count - a.vote_count)
+  if (withVotes.length < 2) return null
+
+  const top = withVotes.slice(0, 6)
+  const restVotes = withVotes.slice(6).reduce((s, r) => s + r.vote_count, 0)
+  const segments = restVotes > 0 ? [...top, { id: '__rest', title: 'Others', vote_count: restVotes } as FeatureRequest] : top
+  const total = segments.reduce((s, r) => s + r.vote_count, 0)
+
+  const r = 40, cx = 60, cy = 60
+  const circ = 2 * Math.PI * r
+  let offset = 0
+  const arcs = segments.map((seg, i) => {
+    const pct = seg.vote_count / total
+    const dash = pct * circ
+    const arc = { seg, dash, gap: circ - dash, offset, color: VOTE_COLORS[i % VOTE_COLORS.length], pct }
+    offset += dash
+    return arc
+  })
+
+  return (
+    <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 mb-6">
+      <div className="flex items-center gap-2 mb-4">
+        <BarChart2 className="w-4 h-4 text-[#0077b6]" />
+        <h3 className="text-sm font-bold text-[#03045e]" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>Vote Distribution</h3>
+        <span className="ml-auto text-xs text-[#94a3b8]">{total} total votes</span>
+      </div>
+      <div className="flex items-center gap-6 flex-wrap">
+        {/* Donut */}
+        <div className="flex-shrink-0">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            {arcs.map((arc, i) => (
+              <circle
+                key={i}
+                cx={cx} cy={cy} r={r}
+                fill="none"
+                stroke={arc.color}
+                strokeWidth="18"
+                strokeDasharray={`${arc.dash} ${arc.gap}`}
+                strokeDashoffset={-arc.offset}
+                style={{ transform: 'rotate(-90deg)', transformOrigin: `${cx}px ${cy}px` }}
+              />
+            ))}
+            <circle cx={cx} cy={cy} r="26" fill="white" />
+            <text x={cx} y={cy - 5} textAnchor="middle" className="text-[11px]" fill="#03045e" fontWeight="bold" fontSize="14" fontFamily="Syne,sans-serif">{total}</text>
+            <text x={cx} y={cy + 11} textAnchor="middle" fill="#94a3b8" fontSize="9">votes</text>
+          </svg>
+        </div>
+        {/* Legend */}
+        <div className="flex-1 min-w-[180px] space-y-1.5">
+          {arcs.map((arc, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: arc.color }} />
+              <span className="text-xs text-[#334155] flex-1 truncate max-w-[160px]" title={arc.seg.title}>{arc.seg.title}</span>
+              <span className="text-xs font-bold text-[#03045e] ml-auto">{arc.seg.vote_count}</span>
+              <span className="text-[10px] text-[#94a3b8] w-8 text-right">{Math.round(arc.pct * 100)}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 type StatusFilter = 'all' | 'open' | 'planned' | 'done'
 type SortOrder = 'votes' | 'newest' | 'oldest'
@@ -251,6 +320,7 @@ function RequestsContent() {
 
   const totalOpen = requests.filter(r => r.status === 'open').length
   const totalClustered = requests.filter(r => r.status !== 'open').length
+  const maxVotes = requests.length > 0 ? Math.max(...requests.map(r => r.vote_count), 1) : 1
 
   const filterTabs: { id: StatusFilter; label: string }[] = [
     { id: 'all', label: 'All' },
@@ -294,6 +364,9 @@ function RequestsContent() {
           </button>
         </div>
       </div>
+
+      {/* Vote distribution chart */}
+      {!loading && requests.length >= 2 && <DonutChart requests={requests} />}
 
       {/* Filter / sort bar */}
       <div className="flex items-center justify-between gap-4 mb-5 flex-wrap">
@@ -361,6 +434,15 @@ function RequestsContent() {
                     </div>
                     {req.description && (
                       <p className="text-sm text-[#64748b] mt-0.5 truncate">{req.description}</p>
+                    )}
+                    {/* vote bar */}
+                    {req.vote_count > 0 && (
+                      <div className="mt-1.5 h-1 rounded-full bg-[#f1f5f9] overflow-hidden w-full max-w-xs">
+                        <div
+                          className="h-full rounded-full bg-[#0077b6] transition-all duration-500"
+                          style={{ width: `${Math.round((req.vote_count / maxVotes) * 100)}%` }}
+                        />
+                      </div>
                     )}
                     <span className="text-[11px] text-[#94a3b8]">
                       {new Date(req.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
