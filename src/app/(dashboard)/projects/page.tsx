@@ -13,9 +13,12 @@ export default function ProjectsPage() {
 
   useEffect(() => {
     async function load() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
       const { data } = await supabase
         .from('projects')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
       setProjects(data ?? [])
       setLoading(false)

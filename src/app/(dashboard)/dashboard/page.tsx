@@ -31,7 +31,7 @@ export default function DashboardPage() {
         { data: projectsData },
       ] = await Promise.all([
         supabase.from('profiles').select('full_name').eq('id', user.id).single(),
-        supabase.from('projects').select('*').order('created_at', { ascending: false }),
+        supabase.from('projects').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
       ])
 
       const name = profile?.full_name ?? user.email ?? 'there'
