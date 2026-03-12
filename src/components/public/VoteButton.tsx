@@ -17,9 +17,19 @@ export function VoteButton({ requestId, initialCount }: { requestId: string; ini
     setLoading(true)
     try {
       const res = await fetch(`/api/feature-requests/${requestId}/vote`, { method: 'POST' })
-      if (res.status === 409) { setVoted(true); localStorage.setItem(`voted_${requestId}`, '1'); return }
+      const data = await res.json().catch(() => ({} as { vote_count?: number }))
+      if (res.status === 409) {
+        if (typeof data.vote_count === 'number') setCount(data.vote_count)
+        setVoted(true)
+        localStorage.setItem(`voted_${requestId}`, '1')
+        return
+      }
       if (!res.ok) throw new Error('Vote failed')
-      setCount(c => c + 1)
+      if (typeof data.vote_count === 'number') {
+        setCount(data.vote_count)
+      } else {
+        setCount(c => c + 1)
+      }
       setVoted(true)
       localStorage.setItem(`voted_${requestId}`, '1')
     } catch {
