@@ -1,16 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ChevronUp, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export function VoteButton({ requestId, initialCount }: { requestId: string; initialCount: number }) {
   const [count, setCount] = useState(initialCount)
-  const [voted, setVoted] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem(`voted_${requestId}`) === '1'
-  })
+  const [voted, setVoted] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    setVoted(localStorage.getItem(`voted_${requestId}`) === '1')
+  }, [requestId])
 
   async function handleVote() {
     if (loading) return
