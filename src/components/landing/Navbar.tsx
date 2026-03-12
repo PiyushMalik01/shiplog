@@ -8,7 +8,7 @@ import Image from 'next/image'
 const NAV_LINKS = [
   { label: 'Features', href: '#features' },
   { label: 'How It Works', href: '#how-it-works' },
-  { label: 'Changelog', href: '#changelog' },
+  { label: 'Changelog', href: '#ai-magic' },
 ]
 
 export default function Navbar() {
@@ -94,7 +94,7 @@ export default function Navbar() {
           >
             Login
           </Link>
-          <Link href="/signup" className="btn btn-primary text-sm px-5 py-2.5">
+          <Link href="/signup" className="btn btn-primary text-xs sm:text-sm px-3 sm:px-5 py-1.5 sm:py-2.5">
             Get Started →
           </Link>
         </div>
