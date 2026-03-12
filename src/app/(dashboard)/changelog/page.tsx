@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useAutoRefresh } from '@/lib/hooks'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { ScrollText, Search, PenLine, Loader2, Mail, X, Copy, Check } from 'lucide-react'
@@ -49,25 +50,25 @@ function ChangelogContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
+  const loadEntries = useCallback(async (silent = false) => {
     if (!selectedProject) {
       setEntries([])
-      setLoading(false)
+      if (!silent) setLoading(false)
       return
     }
-    async function loadEntries() {
-      setLoading(true)
-      const { data } = await supabase
-        .from('changelog_entries')
-        .select('*')
-        .eq('project_id', selectedProject)
-        .order('created_at', { ascending: false })
-      setEntries(data ?? [])
-      setLoading(false)
-    }
-    loadEntries()
+    if (!silent) setLoading(true)
+    const { data } = await supabase
+      .from('changelog_entries')
+      .select('*')
+      .eq('project_id', selectedProject)
+      .order('created_at', { ascending: false })
+    setEntries(data ?? [])
+    if (!silent) setLoading(false)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProject])
+
+  useEffect(() => { loadEntries() }, [loadEntries])
+  useAutoRefresh(() => loadEntries(true))
 
   async function togglePublish(entry: ChangelogEntry) {
     setTogglingId(entry.id)

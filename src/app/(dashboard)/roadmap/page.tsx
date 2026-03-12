@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useAutoRefresh } from '@/lib/hooks'
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd'
 import toast from 'react-hot-toast'
 import { Sparkles, Loader2, Plus, GripVertical, X, Trash2, Zap, Copy, Check, FileText, Send } from 'lucide-react'
@@ -144,6 +145,7 @@ function RoadmapContent() {
   }, [selectedProject])
 
   useEffect(() => { loadItems() }, [loadItems])
+  useAutoRefresh(() => { if (!prioritizing && !deletingItemId && !generatingShipIt) loadItems() })
 
   async function onDragEnd(result: DropResult) {
     const { draggableId, destination } = result

@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useCallback, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useAutoRefresh } from '@/lib/hooks'
 import toast from 'react-hot-toast'
 import { Inbox, GitBranch, Loader2, ChevronDown, ChevronUp, MessageSquare, Send, Trash2, BarChart2 } from 'lucide-react'
 import type { FeatureRequest, Project, Comment } from '@/types'
@@ -237,25 +238,25 @@ function RequestsContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
+  const loadRequests = useCallback(async (silent = false) => {
     if (!selectedProject) {
       setRequests([])
-      setLoading(false)
+      if (!silent) setLoading(false)
       return
     }
-    async function loadRequests() {
-      setLoading(true)
-      const { data } = await supabase
-        .from('feature_requests')
-        .select('*')
-        .eq('project_id', selectedProject)
-        .order('vote_count', { ascending: false })
-      setRequests(data ?? [])
-      setLoading(false)
-    }
-    loadRequests()
+    if (!silent) setLoading(true)
+    const { data } = await supabase
+      .from('feature_requests')
+      .select('*')
+      .eq('project_id', selectedProject)
+      .order('vote_count', { ascending: false })
+    setRequests(data ?? [])
+    if (!silent) setLoading(false)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProject])
+
+  useEffect(() => { loadRequests() }, [loadRequests])
+  useAutoRefresh(() => loadRequests(true))
 
   async function handleDeleteRequest(id: string) {
     setDeletingId(id)

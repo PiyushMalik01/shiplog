@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useAutoRefresh } from '@/lib/hooks'
 import Link from 'next/link'
 import { Plus, FolderOpen, CheckCircle2, Circle } from 'lucide-react'
 import type { Project } from '@/types'
@@ -19,66 +20,64 @@ export default function DashboardPage() {
   const [pendingRequests, setPendingRequests] = useState(0)
   const [lastShipped, setLastShipped] = useState<Record<string, string>>({})
 
-  useEffect(() => {
+  const load = useCallback(async () => {
     const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
 
-    async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+    const [
+      { data: profile },
+      { data: projectsData },
+    ] = await Promise.all([
+      supabase.from('profiles').select('full_name').eq('id', user.id).single(),
+      supabase.from('projects').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
+    ])
 
+    const name = profile?.full_name ?? user.email ?? 'there'
+    setUserName(name)
+
+    const allProjects = projectsData ?? []
+    setProjects(allProjects)
+
+    if (allProjects.length > 0) {
+      const ids = allProjects.map((p: Project) => p.id)
       const [
-        { data: profile },
-        { data: projectsData },
+        { count: published },
+        { count: pending },
+        { data: latestEntries },
       ] = await Promise.all([
-        supabase.from('profiles').select('full_name').eq('id', user.id).single(),
-        supabase.from('projects').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
+        supabase
+          .from('changelog_entries')
+          .select('*', { count: 'exact', head: true })
+          .in('project_id', ids)
+          .eq('is_published', true),
+        supabase
+          .from('feature_requests')
+          .select('*', { count: 'exact', head: true })
+          .in('project_id', ids)
+          .eq('status', 'open'),
+        supabase
+          .from('changelog_entries')
+          .select('project_id, published_at')
+          .in('project_id', ids)
+          .eq('is_published', true)
+          .order('published_at', { ascending: false }),
       ])
-
-      const name = profile?.full_name ?? user.email ?? 'there'
-      setUserName(name)
-
-      const allProjects = projectsData ?? []
-      setProjects(allProjects)
-
-      if (allProjects.length > 0) {
-        const ids = allProjects.map((p: Project) => p.id)
-        const [
-          { count: published },
-          { count: pending },
-          { data: latestEntries },
-        ] = await Promise.all([
-          supabase
-            .from('changelog_entries')
-            .select('*', { count: 'exact', head: true })
-            .in('project_id', ids)
-            .eq('is_published', true),
-          supabase
-            .from('feature_requests')
-            .select('*', { count: 'exact', head: true })
-            .in('project_id', ids)
-            .eq('status', 'open'),
-          supabase
-            .from('changelog_entries')
-            .select('project_id, published_at')
-            .in('project_id', ids)
-            .eq('is_published', true)
-            .order('published_at', { ascending: false }),
-        ])
-        setPublishedUpdates(published ?? 0)
-        setPendingRequests(pending ?? 0)
-        // Build a map of projectId -> most recent published_at
-        const map: Record<string, string> = {}
-        for (const e of (latestEntries ?? [])) {
-          if (e.project_id && !map[e.project_id]) map[e.project_id] = e.published_at
-        }
-        setLastShipped(map)
+      setPublishedUpdates(published ?? 0)
+      setPendingRequests(pending ?? 0)
+      // Build a map of projectId -> most recent published_at
+      const map: Record<string, string> = {}
+      for (const e of (latestEntries ?? [])) {
+        if (e.project_id && !map[e.project_id]) map[e.project_id] = e.published_at
       }
-
-      setLoading(false)
+      setLastShipped(map)
     }
 
-    load()
+    setLoading(false)
   }, [])
+
+  useEffect(() => { load() }, [load])
+  useAutoRefresh(load)
 
   const projectIds = projects.map(p => p.id)
 

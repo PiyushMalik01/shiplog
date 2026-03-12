@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://xxshiplogxx.vercel.app"><strong>Live Demo →</strong></a>
+  <a href="https://xxshiplogxx.vercel.app"><strong>Live Demo →</strong></a><br/>
+  <sub>https://xxshiplogxx.vercel.app</sub>
 </p>
 
 <p align="center">
