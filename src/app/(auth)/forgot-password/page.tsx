@@ -18,12 +18,11 @@ export default function ForgotPasswordPage() {
     setError('')
     setLoading(true)
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    })
+    const redirectTo = `${window.location.origin}/reset-password`
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
 
     if (error) {
-      setError(error.message || 'Failed to send reset email. Please try again.')
+      setError(`${error.message}${error.status ? ` (${error.status})` : ''}`)
       setLoading(false)
       return
     }
@@ -61,9 +60,10 @@ export default function ForgotPasswordPage() {
               <p className="text-white/70 mb-6">
                 We've sent a password reset link to <strong>{email}</strong>. Click the link to reset your password.
               </p>
-              <p className="text-sm text-white/50 mb-8">
-                The link will expire in 24 hours.
-              </p>
+              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-6 text-left">
+                <p className="text-yellow-300 text-sm font-medium mb-1">📧 Don't see it?</p>
+                <p className="text-yellow-200/70 text-xs">Check your <strong>spam / junk</strong> folder. The link expires in 24 hours.</p>
+              </div>
 
               {/* Back to Login */}
               <Link
