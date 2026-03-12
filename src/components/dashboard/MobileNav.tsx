@@ -39,7 +39,7 @@ export default function MobileNav({
             transition={{ type: 'spring', damping: 25, stiffness: 250 }}
           >
             <div className="relative h-full">
-              <Sidebar />
+              <Sidebar collapsible={false} />
               <button
                 onClick={onClose}
                 className="absolute top-4 right-[-44px] w-9 h-9 rounded-full bg-white dark:bg-[#0d1b2e] flex items-center justify-center shadow-lg cursor-pointer"
