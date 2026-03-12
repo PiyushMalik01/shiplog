@@ -19,7 +19,7 @@ export default function ForgotPasswordPage() {
     setLoading(true)
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${window.location.origin}/reset-password`,
     })
 
     if (error) {
@@ -38,7 +38,16 @@ export default function ForgotPasswordPage() {
           {/* Logo */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-block mb-8">
-              <Image src="/logo.svg" alt="ShipLog" width={40} height={40} priority />
+              <Image
+                src="/shiplog_logo1.png"
+                alt="ShipLog"
+                width={150}
+                height={48}
+                priority
+                quality={100}
+                className="object-contain"
+                style={{ height: '40px', width: 'auto' }}
+              />
             </Link>
           </div>
 
@@ -91,7 +100,16 @@ export default function ForgotPasswordPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block mb-8">
-            <Image src="/logo.svg" alt="ShipLog" width={40} height={40} priority />
+            <Image
+              src="/shiplog_logo1.png"
+              alt="ShipLog"
+              width={150}
+              height={48}
+              priority
+              quality={100}
+              className="object-contain"
+              style={{ height: '40px', width: 'auto' }}
+            />
           </Link>
         </div>
 

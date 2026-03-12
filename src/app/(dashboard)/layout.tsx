@@ -33,15 +33,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           >
             <Menu className="w-5 h-5 text-[#03045e] dark:text-white" />
           </button>
-          <Image
-            src="/shiplog_logo1.png"
-            alt="ShipLog"
-            width={100}
-            height={32}
-            quality={100}
-            className="object-contain"
-            style={{ height: '28px', width: 'auto' }}
-          />
+          <div className="relative">
+            <Image
+              src="/shiplog_logodark.png"
+              alt="ShipLog"
+              width={100}
+              height={32}
+              quality={100}
+              className="object-contain dark:hidden"
+              style={{ height: '28px', width: 'auto' }}
+            />
+            <Image
+              src="/shiplog_logo1.png"
+              alt="ShipLog"
+              width={100}
+              height={32}
+              quality={100}
+              className="hidden object-contain dark:block"
+              style={{ height: '28px', width: 'auto' }}
+            />
+          </div>
           <div className="w-9" />
         </div>
 

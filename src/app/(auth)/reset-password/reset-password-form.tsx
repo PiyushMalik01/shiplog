@@ -74,7 +74,16 @@ export default function ResetPasswordForm() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <Link href="/" className="inline-block mb-8">
-              <Image src="/logo.svg" alt="ShipLog" width={40} height={40} priority />
+              <Image
+                src="/shiplog_logo1.png"
+                alt="ShipLog"
+                width={150}
+                height={48}
+                priority
+                quality={100}
+                className="object-contain"
+                style={{ height: '40px', width: 'auto' }}
+              />
             </Link>
           </div>
 
@@ -89,7 +98,7 @@ export default function ResetPasswordForm() {
               This password reset link has expired or is invalid. Please request a new one.
             </p>
             <Link
-              href="/auth/forgot-password"
+              href="/forgot-password"
               className="block w-full btn btn-primary py-3 font-semibold text-center"
             >
               Request new link
@@ -106,7 +115,16 @@ export default function ResetPasswordForm() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <Link href="/" className="inline-block mb-8">
-              <Image src="/logo.svg" alt="ShipLog" width={40} height={40} priority />
+              <Image
+                src="/shiplog_logo1.png"
+                alt="ShipLog"
+                width={150}
+                height={48}
+                priority
+                quality={100}
+                className="object-contain"
+                style={{ height: '40px', width: 'auto' }}
+              />
             </Link>
           </div>
 
@@ -138,7 +156,16 @@ export default function ResetPasswordForm() {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block mb-8">
-            <Image src="/logo.svg" alt="ShipLog" width={40} height={40} priority />
+            <Image
+              src="/shiplog_logo1.png"
+              alt="ShipLog"
+              width={150}
+              height={48}
+              priority
+              quality={100}
+              className="object-contain"
+              style={{ height: '40px', width: 'auto' }}
+            />
           </Link>
         </div>
 

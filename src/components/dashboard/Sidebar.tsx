@@ -38,15 +38,26 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="px-5 py-4 border-b border-[#caf0f8] dark:border-white/6">
         <Link href="/dashboard" className="flex items-center gap-3 group no-underline">
-          <Image
-            src="/shiplog_logodark.png"
-            alt="ShipLog"
-            width={100}
-            height={40}
-            quality={100}
-            className="object-contain"
-            style={{ height: '36px', width: 'auto' }}
-          />
+          <div className="relative">
+            <Image
+              src="/shiplog_logodark.png"
+              alt="ShipLog"
+              width={100}
+              height={40}
+              quality={100}
+              className="object-contain dark:hidden"
+              style={{ height: '36px', width: 'auto' }}
+            />
+            <Image
+              src="/shiplog_logo1.png"
+              alt="ShipLog"
+              width={100}
+              height={40}
+              quality={100}
+              className="hidden object-contain dark:block"
+              style={{ height: '36px', width: 'auto' }}
+            />
+          </div>
           <div>
             <p className="font-bold text-[#03045e] dark:text-white text-base leading-none" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>ShipLog</p>
             <p className="text-[11px] text-[#64748b] dark:text-slate-500 mt-0.5">Workspace</p>
