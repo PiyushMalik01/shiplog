@@ -118,19 +118,24 @@ function RoadmapContent() {
   useEffect(() => {
     async function loadProjects() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoading(false); return }
       const { data } = await supabase.from('projects').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
       setProjects(data ?? [])
       const pid = searchParams.get('project_id')
       if (pid) setSelectedProject(pid)
       else if (data?.length) setSelectedProject(data[0].id)
+      else setLoading(false)
     }
     loadProjects()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const loadItems = useCallback(async () => {
-    if (!selectedProject) return
+    if (!selectedProject) {
+      setItems([])
+      setLoading(false)
+      return
+    }
     setLoading(true)
     const { data } = await supabase.from('roadmap_items').select('*').eq('project_id', selectedProject).order('priority', { ascending: true })
     setItems(data ?? [])
@@ -276,6 +281,28 @@ function RoadmapContent() {
 
   function getColumnItems(status: string) {
     return items.filter(i => i.status === status).sort((a, b) => a.position - b.position)
+  }
+
+  if (!loading && projects.length === 0) {
+    return (
+      <div className="min-h-full p-6 md:p-8">
+        <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 text-center">
+          <Sparkles className="w-12 h-12 text-[#94a3b8] mb-4" />
+          <h3 className="text-lg font-bold text-[#03045e] dark:text-white mb-1" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>
+            No projects yet
+          </h3>
+          <p className="text-sm text-[#64748b] dark:text-slate-400 max-w-xs mb-6">
+            Create a project first to build and prioritize your roadmap.
+          </p>
+          <button
+            onClick={() => router.push('/projects/new')}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0077b6] hover:bg-[#023e8a] text-white text-sm font-semibold transition-colors"
+          >
+            Create Your First Project
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (

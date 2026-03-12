@@ -31,7 +31,7 @@ function ChangelogContent() {
   useEffect(() => {
     async function loadProjects() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoading(false); return }
       const { data } = await supabase.from('projects').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
       setProjects(data ?? [])
       const pid = searchParams.get('project_id')
@@ -41,6 +41,8 @@ function ChangelogContent() {
       } else if (data?.length) {
         setSelectedProject(data[0].id)
         setSelectedProjectName(data[0].name)
+      } else {
+        setLoading(false)
       }
     }
     loadProjects()
@@ -48,7 +50,11 @@ function ChangelogContent() {
   }, [])
 
   useEffect(() => {
-    if (!selectedProject) return
+    if (!selectedProject) {
+      setEntries([])
+      setLoading(false)
+      return
+    }
     async function loadEntries() {
       setLoading(true)
       const { data } = await supabase
@@ -140,6 +146,28 @@ function ChangelogContent() {
     { id: 'published', label: 'Published' },
     { id: 'drafts', label: 'Drafts' },
   ]
+
+  if (!loading && projects.length === 0) {
+    return (
+      <div className="min-h-full p-6 md:p-8">
+        <div className="flex flex-col items-center justify-center py-24 bg-white dark:bg-[#0d1b2e] rounded-2xl border border-[#e2e8f0] dark:border-white/8 text-center">
+          <ScrollText className="w-12 h-12 text-[#94a3b8] mb-4" />
+          <h3 className="text-lg font-bold text-[#03045e] dark:text-white mb-1" style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}>
+            No projects yet
+          </h3>
+          <p className="text-sm text-[#64748b] dark:text-slate-400 max-w-xs mb-6">
+            Create a project first to start writing changelog updates.
+          </p>
+          <Link
+            href="/projects/new"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0077b6] hover:bg-[#023e8a] text-white text-sm font-semibold transition-colors no-underline"
+          >
+            Create Your First Project
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-full p-6 md:p-8">
