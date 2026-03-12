@@ -1,8 +1,20 @@
-﻿# ShipLog
+﻿<p align="center">
+  <img src="public/shiplog_logo1.png" alt="ShipLog Logo" width="72" />
+</p>
 
-> AI-powered changelog and roadmap management for indie makers and product teams.
+<h1 align="center">ShipLog</h1>
 
+<p align="center">
+  AI-powered changelog and roadmap management for indie makers and product teams.
+</p>
+
+<p align="center">
+  <a href="https://xxshiplogxx.vercel.app"><strong>Live Demo →</strong></a>
+</p>
+
+<p align="center">
 Paste raw commit messages, get polished user-facing changelogs in seconds. Collect feature requests, cluster them with AI, and manage a prioritized roadmap -- all with a beautiful public page per product.
+</p>
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
