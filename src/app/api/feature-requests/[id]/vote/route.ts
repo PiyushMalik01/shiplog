@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createHash } from 'crypto'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+
+function createPrivilegedClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!url || !serviceRoleKey) return null
+
+  return createSupabaseClient(url, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
+}
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient()
+  const privileged = createPrivilegedClient() ?? supabase
   const { id } = await params
 
   let action: 'toggle' | 'add' | 'remove' = 'toggle'
@@ -31,7 +44,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const ua = req.headers.get('user-agent') ?? ''
   const fingerprint = createHash('sha256').update(ip + ua).digest('hex')
 
-  const { data: existingVote } = await supabase
+  const { data: existingVote } = await privileged
     .from('votes')
     .select('id')
     .eq('feature_request_id', id)
@@ -43,13 +56,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   if (shouldAdd) {
     // Insert vote (unique constraint handles dedup)
-    const { error: voteError } = await supabase.from('votes').insert({
+    const { error: voteError } = await privileged.from('votes').insert({
       feature_request_id: id,
       voter_fingerprint: fingerprint,
     })
 
     if (voteError?.code === '23505') {
-      const { data: current } = await supabase
+      const { data: current } = await privileged
         .from('feature_requests')
         .select('vote_count')
         .eq('id', id)
@@ -60,17 +73,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (voteError) return NextResponse.json({ error: voteError.message }, { status: 500 })
 
     // Atomic increment via DB function (avoids read-then-write race condition)
-    const { error: incrementError } = await supabase.rpc('increment_vote_count', { request_id: id })
+    const { error: incrementError } = await privileged.rpc('increment_vote_count', { request_id: id })
     if (incrementError) {
       // Fallback for environments where the RPC function wasn't applied yet.
-      const { data: current } = await supabase
+      const { data: current } = await privileged
         .from('feature_requests')
         .select('vote_count')
         .eq('id', id)
         .single()
 
       const safeNext = (current?.vote_count ?? existing.vote_count) + 1
-      const { error: fallbackError } = await supabase
+      const { error: fallbackError } = await privileged
         .from('feature_requests')
         .update({ vote_count: safeNext })
         .eq('id', id)
@@ -82,7 +95,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   if (shouldRemove) {
-    const { data: removedVotes, error: removeVoteError } = await supabase
+    const { data: removedVotes, error: removeVoteError } = await privileged
       .from('votes')
       .delete()
       .eq('feature_request_id', id)
@@ -94,14 +107,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
 
     if ((removedVotes ?? []).length > 0) {
-      const { data: current } = await supabase
+      const { data: current } = await privileged
         .from('feature_requests')
         .select('vote_count')
         .eq('id', id)
         .single()
 
       const safeNext = Math.max(0, (current?.vote_count ?? existing.vote_count) - 1)
-      const { error: decrementError } = await supabase
+      const { error: decrementError } = await privileged
         .from('feature_requests')
         .update({ vote_count: safeNext })
         .eq('id', id)
@@ -120,14 +133,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   // Keep roadmap aggregate in sync so vote totals reflect immediately across dashboard views.
   if (existing.cluster_id) {
-    const { data: clusterRequests } = await supabase
+    const { data: clusterRequests } = await privileged
       .from('feature_requests')
       .select('vote_count')
       .eq('cluster_id', existing.cluster_id)
 
     const clusterVoteTotal = (clusterRequests ?? []).reduce((sum, r) => sum + (r.vote_count ?? 0), 0)
 
-    await supabase
+    await privileged
       .from('roadmap_items')
       .update({ vote_total: clusterVoteTotal })
       .eq('id', existing.cluster_id)
