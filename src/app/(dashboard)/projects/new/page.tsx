@@ -74,13 +74,13 @@ export default function NewProjectPage() {
     }`
 
   return (
-    <div className="min-h-full p-6 md:p-8">
+    <div className="min-h-full p-4 sm:p-6 md:p-8">
       {/* Breadcrumb */}
-      <p className="text-[11px] font-semibold text-[#64748b] dark:text-slate-400 uppercase tracking-widest mb-6">
+      <p className="text-[11px] font-semibold text-[#64748b] dark:text-slate-400 uppercase tracking-widest mb-6 max-w-[760px] mx-auto w-full">
         Dashboard / Projects / New
       </p>
 
-      <div className="max-w-[560px]">
+      <div className="max-w-[760px] mx-auto w-full bg-white/80 dark:bg-[#0d1b2e]/70 border border-[#e2e8f0] dark:border-white/10 rounded-2xl p-5 sm:p-6 md:p-8 shadow-sm">
         <h1
           className="text-[28px] font-bold text-[#03045e] dark:text-white leading-tight mb-1"
           style={{ fontFamily: 'var(--font-syne), Syne, sans-serif' }}
@@ -92,7 +92,7 @@ export default function NewProjectPage() {
           <span className="font-mono text-[#0077b6]">shiplog.app/your-slug</span>
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-[560px]">
           {/* Project Name */}
           <div>
             <label htmlFor="name" className="block text-[13px] font-semibold text-[#03045e] dark:text-slate-200 mb-1.5">

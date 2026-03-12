@@ -34,7 +34,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // Atomic increment via DB function (avoids read-then-write race condition)
   const { error: incrementError } = await supabase.rpc('increment_vote_count', { request_id: id })
   if (incrementError) {
-    return NextResponse.json({ error: incrementError.message }, { status: 500 })
+    // Fallback for environments where the RPC function wasn't applied yet.
+    const { error: fallbackError } = await supabase
+      .from('feature_requests')
+      .update({ vote_count: existing.vote_count + 1 })
+      .eq('id', id)
+
+    if (fallbackError) {
+      return NextResponse.json({ error: fallbackError.message }, { status: 500 })
+    }
   }
 
   const { data: updated, error: updatedError } = await supabase
