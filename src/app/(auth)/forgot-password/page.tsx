@@ -5,14 +5,12 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, Loader2, ArrowLeft } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
-  const router = useRouter()
   const supabase = createClient()
 
   async function handleReset(e: React.FormEvent) {
